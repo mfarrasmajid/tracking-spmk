@@ -16,6 +16,39 @@
             <h3 class="card-label">PID {{$data['document']->pid}}</h3>
         </div>
         <div class="card-toolbar">
+            @if ($data['new_doc'])
+            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_1">
+                Tambahkan Flow Dokumen Baru
+            </button>
+
+            <div class="modal fade" tabindex="-1" id="kt_modal_1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">Flow Dokumen Baru</h3>
+
+                            <!--begin::Close-->
+                            <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                            </div>
+                            <!--end::Close-->
+                        </div>
+
+                        <div class="modal-body">
+                            <p>Anda yakin akan menambahkan flow approval dokumen baru?.</p>
+                        </div>
+
+                        <div class="modal-footer">
+                            <form action="{{ url('/dashboard/new_doc') }}/{{$data['document']->id}}" method="POST">
+                                @csrf
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Ya, Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
     <div class="card-body">
@@ -243,76 +276,5 @@
 <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
 <script>
-    var KTDatatablesAdvancedColumnRendering = function() {
-
-	var init = function() {
-		var table = $('#kt_datatable');
-
-		// begin first table
-		datatable = table.DataTable({
-            dom: `<'row'<'col-sm-6 text-start'B><'col-sm-6 text-end'f>>
-            <'row'<'col-sm-12'tr>>
-			<'row'<'col-sm-12 col-md-5'il><'col-sm-12 col-md-7 dataTables_pager'p>>`,
-            lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
-
-            buttons: [
-				'print',
-				'copyHtml5',
-				'excelHtml5',
-				'csvHtml5',
-				'pdfHtml5',
-			],
-
-            pageLength: 10,
-			responsive: true,
-			paging: true,
-			columnDefs: [{
-                    targets: -1, // Actions
-                    title: 'Actions',
-                    orderable: false,
-                    render: function(data, type, full, meta) {
-                        return '\
-							<a href="{{url("/document/list_document")}}/' + data + '" class="btn btn-sm btn-clean btn-icon" title="Edit">\
-								<i class="la la-edit"></i>\
-							</a>\
-						';
-                    },
-                },
-            ],
-		});
-
-        $('select[name="region"]').on('change', function(){
-          datatable.columns(3).search(this.value).draw();   
-            $($.fn.dataTable.tables(true)).DataTable()
-        .columns.adjust();
-        });
-
-        @if (isset($data['q_region']))
-            datatable.columns(3).search("{{$data['q_region']}}").draw();   
-        @endif
-
-        $('select[name="status"]').on('change', function(){
-          datatable.columns(8).search(this.value).draw();   
-            $($.fn.dataTable.tables(true)).DataTable()
-        .columns.adjust();
-        });
-
-        @if (isset($data['q_status']))
-            datatable.columns(8).search("{{$data['q_status']}}").draw();   
-        @endif
-	};
-
-	return {
-
-		//main function to initiate the module
-		init: function() {
-			init();
-		}
-	};
-}();
-
-jQuery(document).ready(function() {
-	KTDatatablesAdvancedColumnRendering.init();
-});
 </script>
 @stop 

@@ -56,7 +56,21 @@
         </div>
         @endif
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-2">
+                <div class="fv-row mb-10 fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
+                    <!--begin::Label-->
+                    <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
+                        <span>Filter PID</span>
+                        <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Filter PID"></i>
+                    </label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <input type="text" name="pid" class="form-control form-control-solid">
+                    <!--end::Input-->
+                    <div class="fv-plugins-message-container invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="col-lg-2">
                 <div class="fv-row mb-10 fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
                     <!--begin::Label-->
                     <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
@@ -75,7 +89,59 @@
                     <div class="fv-plugins-message-container invalid-feedback"></div>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-2">
+                <div class="fv-row mb-10 fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
+                    <!--begin::Label-->
+                    <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
+                        <span>Filter SOW</span>
+                        <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Filter sow"></i>
+                    </label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <select name="scope" class="form-select form-select-solid" data-control="select2" data-allow-clear="true" data-placeholder="SOW">
+                        <option></option>
+                        @foreach($data['all_scope'] as $s)
+                        <option value="{{$s->scope}}">{{$s->scope}}</option>
+                        @endforeach
+                    </select>
+                    <!--end::Input-->
+                    <div class="fv-plugins-message-container invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div class="fv-row mb-10 fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
+                    <!--begin::Label-->
+                    <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
+                        <span>Filter Supplier</span>
+                        <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Filter sow"></i>
+                    </label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <select name="supplier_name" class="form-select form-select-solid" data-control="select2" data-allow-clear="true" data-placeholder="Supplier Name">
+                        <option></option>
+                        @foreach($data['all_supplier_name'] as $s)
+                        <option value="{{$s->supplier_name}}">{{$s->supplier_name}}</option>
+                        @endforeach
+                    </select>
+                    <!--end::Input-->
+                    <div class="fv-plugins-message-container invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div class="fv-row mb-10 fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
+                    <!--begin::Label-->
+                    <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
+                        <span>Filter SPMK</span>
+                        <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Filter SPMK"></i>
+                    </label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <input type="text" name="spmk" class="form-control form-control-solid">
+                    <!--end::Input-->
+                    <div class="fv-plugins-message-container invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="col-lg-2">
                 <div class="fv-row mb-10 fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
                     <!--begin::Label-->
                     <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
@@ -103,7 +169,7 @@
                     <th>PID</th>
                     <th>Site Name</th>
                     <th>Region</th>
-                    <th>Scope</th>
+                    <th>SOW</th>
                     <th>Amount</th>
                     <th>Supplier Name</th>
                     <th>SPMK</th>
@@ -133,7 +199,7 @@
                     <th>PID</th>
                     <th>Site Name</th>
                     <th>Region</th>
-                    <th>Scope</th>
+                    <th>SOW</th>
                     <th>Amount</th>
                     <th>Supplier Name</th>
                     <th>SPMK</th>
@@ -200,6 +266,32 @@
                 },
             ],
 		});
+
+        $('input[name="pid"]').on('keyup', function(){
+          datatable.columns(1).search(this.value).draw();   
+            $($.fn.dataTable.tables(true)).DataTable()
+        .columns.adjust();
+        });
+
+        $('select[name="scope"]').on('change', function(){
+          datatable.columns(4).search(this.value).draw();   
+            $($.fn.dataTable.tables(true)).DataTable()
+        .columns.adjust();
+        });
+
+        $('select[name="supplier_name"]').on('change', function(){
+          datatable.columns(6).search(this.value).draw();   
+            $($.fn.dataTable.tables(true)).DataTable()
+        .columns.adjust();
+        });
+
+        $('input[name="spmk"]').on('keyup', function(){
+          datatable.columns(7).search(this.value).draw();   
+            $($.fn.dataTable.tables(true)).DataTable()
+        .columns.adjust();
+        });
+
+
 
         $('select[name="region"]').on('change', function(){
           datatable.columns(3).search(this.value).draw();   

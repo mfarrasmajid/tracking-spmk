@@ -80,6 +80,8 @@ class MainController extends Controller
                                                             ->get();
         $data['all_status'] = DB::table('master_status')->select('*')->get();
         $data['all_region'] = DB::table('document_tracking')->select(DB::raw('DISTINCT region as region'))->orderBy('region','asc')->get();
+        $data['all_scope'] = DB::table('document_tracking')->select(DB::raw('DISTINCT scope as scope'))->orderBy('scope','asc')->get();
+        $data['all_supplier_name'] = DB::table('document_tracking')->select(DB::raw('DISTINCT supplier_name as supplier_name'))->orderBy('supplier_name','asc')->get();
         return view('list_document', compact('data'));
     }
 
@@ -171,6 +173,12 @@ class MainController extends Controller
         if (($doc->id_status == 7) && ($doc->vp_proc_nik == $nik_tg)){
             $data['privilege'] = 1;
             $data['latest_pic'] = 'VP Procurement';
+        }
+        $pm = ['745491', '785582', '785789', '785886', '806040', '825809', '825811', '826188', '865672', '877258', '936442', '935378'];
+        if (in_array($nik_tg, $pm)){
+            $data['new_doc'] = 1;
+        } else {
+            $data['new_doc'] = 0;
         }
         return view('detail_list_document', compact('data'));
     }
@@ -267,5 +275,59 @@ class MainController extends Controller
         } else {
             return redirect()->route('detail_list_document', ['id' => $id])->with('error', 'File upload tidak ditemukan, mohon cek kembali file anda');
         }
+    }
+
+    public function new_doc (Request $request, $id){
+        $nik_tg = $request->session()->get('user')->nik_tg;
+
+        $check = DB::table('document_tracking')->where('id', $id)->select('*')->get();
+        if (count($check) == 0){
+            return redirect()->route('list_document')->with('error', 'ID Dokumen tidak ditemukan, mohon cek kembali URL anda');
+        }
+        $check = $check->first();
+        $pid = DB::table('document_tracking')->where('pid', $check->pid)->select('*')->get();
+        $count = count($pid) + 1;
+        
+        $insert = DB::table('document_tracking')->insertGetId([
+                                                    'pid' => $check->pid.' Doc '.$count,
+                                                    'site_name' => $check->site_name,
+                                                    'region' => $check->region,
+                                                    'scope' => $check->scope,
+                                                    'amount' => $check->amount,
+                                                    'supplier_name' => $check->supplier_name,
+                                                    'spmk' => $check->spmk,
+                                                    'pm_nik' => $check->pm_nik,
+                                                    'pm_name' => $check->pm_name,
+                                                    'pm_posisi' => $check->pm_posisi,
+                                                    'mgr_region_nik' => $check->mgr_region_nik,
+                                                    'mgr_region_name' => $check->mgr_region_name,
+                                                    'mgr_region_posisi' => $check->mgr_region_posisi,
+                                                    'gm_area_nik' => $check->gm_area_nik,
+                                                    'gm_area_name' => $check->gm_area_name,
+                                                    'gm_area_posisi' => $check->gm_area_posisi,
+                                                    'mgr_cons_nik' => $check->mgr_cons_nik,
+                                                    'mgr_cons_name' => $check->mgr_cons_name,
+                                                    'mgr_cons_posisi' => $check->mgr_cons_posisi,
+                                                    'gm_cons_nik' => $check->gm_cons_nik,
+                                                    'gm_cons_name' => $check->gm_cons_name,
+                                                    'gm_cons_posisi' => $check->gm_cons_posisi,
+                                                    'mgr_proc_nik' => $check->mgr_proc_nik,
+                                                    'mgr_proc_name' => $check->mgr_proc_name,
+                                                    'mgr_proc_posisi' => $check->mgr_proc_posisi,
+                                                    'vp_proc_nik' => $check->vp_proc_nik,
+                                                    'vp_proc_name' => $check->vp_proc_name,
+                                                    'vp_proc_posisi' => $check->vp_proc_posisi,
+                                                    'id_status' => 1
+        ]);
+        $activity = 'Success New Doc PID '.$check->pid;
+        $status = 'SUCCESS';
+        $datetime = date('Y-m-d H:i:s');
+        DB::table('log')->insert([
+            'nik_tg' => $nik_tg,
+            'activity' => $activity,
+            'status' => $status,
+            'datetime' => $datetime
+        ]);
+        return redirect()->route('detail_list_document', ['id' => $insert])->with('success', 'Flow dokumen baru berhasil digenerate');
     }
 }
