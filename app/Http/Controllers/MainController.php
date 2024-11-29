@@ -126,7 +126,7 @@ class MainController extends Controller
             $data['latest_document'] = [];
         }
         $data['privilege'] = 0;
-        if (($nik_tg = '935378') && ($doc->id_status != 8)){
+        if (($nik_tg == '935378') && ($doc->id_status != 8)){
             $data['privilege'] = 1;
             if ($doc->id_status == 1){
                 $data['latest_pic'] = 'PM';

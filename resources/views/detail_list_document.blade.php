@@ -191,7 +191,7 @@
                         <div class="mb-2">
                             <div class="fs-5 fw-bolder">Get Latest Document:</div>
                             @foreach($data['latest_document'] as $l)
-                            <div><a href="{{ url('/storage')}}/{{$l}}">{{$l}}</a></div>
+                            <div><a href="{{ asset('/storage')}}/{{$l}}">{{$l}}</a></div>
                             @endforeach
                         </div>
                     </div>
