@@ -108,6 +108,10 @@
                             <div class="fs-5 fw-bolder text-muted mb-2">Supplier Name</div>
                             <div class="fs-6 ">{{$data['document']->supplier_name}}</div>
                         </div>
+                        <div class="mb-5">
+                            <div class="fs-5 fw-bolder text-muted mb-2">Status</div>
+                            <div class="fs-6 "><span class="badge badge-sm badge-{{$data['document']->class}}">{{$data['document']->status}}</span></div>
+                        </div>
                     </div>
                     <div class="col-lg-4">
                         <div class="mb-5">
@@ -119,100 +123,146 @@
                             <div class="fs-6 ">{{$data['document']->spmk}}</div>
                         </div>
                         <div class="mb-5">
+                            <div class="fs-5 fw-bolder text-muted mb-2">Aging</div>
+                            <div class="fs-6 ">{{$data['aging']}} hari</div>
+                        </div>
+                        <div class="mb-5">
                             <div class="fs-5 fw-bolder text-muted mb-2">Amount</div>
                             <div class="fs-6 ">@php echo number_format($data['document']->amount, 0,',','.')@endphp</div>
                         </div>
                         <div class="mb-5">
-                            <div class="fs-5 fw-bolder text-muted mb-2">Status</div>
-                            <div class="fs-6 "><span class="badge badge-sm badge-{{$data['document']->class}}">{{$data['document']->status}}</span></div>
+                            <div class="fs-5 fw-bolder text-muted mb-2">Amount Procurement</div>
+                            <div class="fs-6 ">@php echo number_format($data['document']->amount_proc, 0,',','.')@endphp</div>
                         </div>
                     </div>
                     <div class="col-lg-4 mb-10">
-                        <div class="mb-2">
-                            <div class="fs-6 fw-bolder d-flex flex-row justify-content-between">
+                        <div class="mb-2 border border-gray-600 rounded p-5">
+                            <div class="fs-6 fw-bolder d-flex flex-row justify-content-between align-items-center">
                                 PM Status
                                 @if ($data['document']->pm_date != null)
-                                <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
+                                <div class="d-flex flex-column align-items-end">
+                                    <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
+                                    <div class="fs-7">{{ date('d M Y H:i:s', strtotime($data['document']->pm_date)) }}</div>
+                                </div>
                                 @else
-                                <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
+                                <div class="d-flex flex-column align-items-end">
+                                    <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
+                                    <div class="fs-7">NY Approved</div>
+                                </div>
                                 @endif
                             </div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->pm_name}}</div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->pm_nik}}</div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->pm_posisi}}</div>
                         </div>
-                        <div class="mb-2">
-                            <div class="fs-6 fw-bolder d-flex flex-row justify-content-between">
+                        <div class="mb-2 border border-gray-600 rounded p-5">
+                            <div class="fs-6 fw-bolder d-flex flex-row justify-content-between align-items-center">
                                 MGR Regional Status
                                 @if ($data['document']->mgr_region_date != null)
-                                <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
+                                <div class="d-flex flex-column align-items-end">
+                                    <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
+                                    <div class="fs-7">{{ date('d M Y H:i:s', strtotime($data['document']->mgr_region_date)) }}</div>
+                                </div>
                                 @else
-                                <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
+                                <div class="d-flex flex-column align-items-end">
+                                    <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
+                                    <div class="fs-7">NY Approved</div>
+                                </div>
                                 @endif
                             </div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->mgr_region_name}}</div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->mgr_region_nik}}</div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->mgr_region_posisi}}</div>
                         </div>
-                        <div class="mb-2">
-                            <div class="fs-6 fw-bolder d-flex flex-row justify-content-between">
+                        <div class="mb-2 border border-gray-600 rounded p-5">
+                            <div class="fs-6 fw-bolder d-flex flex-row justify-content-between align-items-center">
                                 GM Area Status
                                 @if ($data['document']->gm_area_date != null)
-                                <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
+                                <div class="d-flex flex-column align-items-end">
+                                    <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
+                                    <div class="fs-7">{{ date('d M Y H:i:s', strtotime($data['document']->gm_area_date)) }}</div>
+                                </div>
                                 @else
-                                <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
+                                <div class="d-flex flex-column align-items-end">
+                                    <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
+                                    <div class="fs-7">NY Approved</div>
+                                </div>
                                 @endif
                             </div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->gm_area_name}}</div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->gm_area_nik}}</div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->gm_area_posisi}}</div>
                         </div>
-                        <div class="mb-2">
-                            <div class="fs-6 fw-bolder d-flex flex-row justify-content-between">
+                        <div class="mb-2 border border-gray-600 rounded p-5">
+                            <div class="fs-6 fw-bolder d-flex flex-row justify-content-between align-items-center">
                                 MGR Construction Status
                                 @if ($data['document']->mgr_cons_date != null)
-                                <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
+                                <div class="d-flex flex-column align-items-end">
+                                    <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
+                                    <div class="fs-7">{{ date('d M Y H:i:s', strtotime($data['document']->mgr_cons_date)) }}</div>
+                                </div>
                                 @else
-                                <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
+                                <div class="d-flex flex-column align-items-end">
+                                    <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
+                                    <div class="fs-7">NY Approved</div>
+                                </div>
                                 @endif
                             </div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->mgr_cons_name}}</div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->mgr_cons_nik}}</div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->mgr_cons_posisi}}</div>
                         </div>
-                        <div class="mb-2">
-                            <div class="fs-6 fw-bolder d-flex flex-row justify-content-between">
+                        <div class="mb-2 border border-gray-600 rounded p-5">
+                            <div class="fs-6 fw-bolder d-flex flex-row justify-content-between align-items-center">
                                 GM Construction Status
                                 @if ($data['document']->gm_cons_date != null)
-                                <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
+                                <div class="d-flex flex-column align-items-end">
+                                    <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
+                                    <div class="fs-7">{{ date('d M Y H:i:s', strtotime($data['document']->gm_cons_date)) }}</div>
+                                </div>
                                 @else
-                                <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
+                                <div class="d-flex flex-column align-items-end">
+                                    <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
+                                    <div class="fs-7">NY Approved</div>
+                                </div>
                                 @endif
                             </div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->gm_cons_name}}</div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->gm_cons_nik}}</div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->gm_cons_posisi}}</div>
                         </div>
-                        <div class="mb-2">
-                            <div class="fs-6 fw-bolder d-flex flex-row justify-content-between">
+                        <div class="mb-2 border border-gray-600 rounded p-5">
+                            <div class="fs-6 fw-bolder d-flex flex-row justify-content-between align-items-center">
                                 MGR Procurement Status
                                 @if ($data['document']->mgr_proc_date != null)
-                                <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
+                                <div class="d-flex flex-column align-items-end">
+                                    <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
+                                    <div class="fs-7">{{ date('d M Y H:i:s', strtotime($data['document']->mgr_proc_date)) }}</div>
+                                </div>
                                 @else
-                                <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
+                                <div class="d-flex flex-column align-items-end">
+                                    <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
+                                    <div class="fs-7">NY Approved</div>
+                                </div>
                                 @endif
                             </div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->mgr_proc_name}}</div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->mgr_proc_nik}}</div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->mgr_proc_posisi}}</div>
                         </div>
-                        <div class="mb-2">
-                            <div class="fs-6 fw-bolder d-flex flex-row justify-content-between">
+                        <div class="mb-2 border border-gray-600 rounded p-5">
+                            <div class="fs-6 fw-bolder d-flex flex-row justify-content-between align-items-center">
                                 VP Procurement Status
                                 @if ($data['document']->vp_proc_date != null)
-                                <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
+                                <div class="d-flex flex-column align-items-end">
+                                    <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
+                                    <div class="fs-7">{{ date('d M Y H:i:s', strtotime($data['document']->vp_proc_date)) }}</div>
+                                </div>
                                 @else
-                                <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
+                                <div class="d-flex flex-column align-items-end">
+                                    <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
+                                    <div class="fs-7">NY Approved</div>
+                                </div>
                                 @endif
                             </div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->vp_proc_name}}</div>
@@ -246,6 +296,20 @@
                                     <!--end::Input-->
                                     <div class="fv-plugins-message-container invalid-feedback"></div>
                                 </div>
+                                @if ($data['privilege_proc'])
+                                <div class="fv-row fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
+                                    <!--begin::Label-->
+                                    <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
+                                        <span class="required">Amount</span>
+                                        <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Amount Procurement"></i>
+                                    </label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <input type="text" name="amount_proc" class="form-control form-control-solid" required>
+                                    <!--end::Input-->
+                                    <div class="fv-plugins-message-container invalid-feedback"></div>
+                                </div>
+                                @endif
                                 <button type="submit" class="btn btn-primary btn-sm">Submit</button>
                             </form>
                         </div>

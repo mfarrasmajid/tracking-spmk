@@ -173,6 +173,7 @@
                     <th>Amount</th>
                     <th>Supplier Name</th>
                     <th>SPMK</th>
+                    <th>Aging Last Update</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -188,6 +189,10 @@
                     <td>{{$d->amount}}</td>
                     <td>{{$d->supplier_name}}</td>
                     <td>{{$d->spmk}}</td>
+                    @php 
+                        $aging = floor((strtotime(now()) - strtotime($d->last_date)) / 86400);
+                    @endphp
+                    <td>{{$aging}} hari</td>
                     <td><span class="badge badge-sm badge-{{$d->class}}">{{$d->status}}</span></td>
                     <td>{{$d->id}}</td>
                 </tr>
@@ -203,6 +208,7 @@
                     <th>Amount</th>
                     <th>Supplier Name</th>
                     <th>SPMK</th>
+                    <th>Aging</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -304,13 +310,13 @@
         @endif
 
         $('select[name="status"]').on('change', function(){
-          datatable.columns(8).search(this.value).draw();   
+          datatable.columns(9).search(this.value).draw();   
             $($.fn.dataTable.tables(true)).DataTable()
         .columns.adjust();
         });
 
         @if (isset($data['q_status']))
-            datatable.columns(8).search("{{$data['q_status']}}").draw();   
+            datatable.columns(9).search("{{$data['q_status']}}").draw();   
         @endif
 	};
 

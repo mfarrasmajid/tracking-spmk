@@ -54,18 +54,41 @@
                             <th class="p-2 fs-6 fw-bolder">Regional</th>
                             @foreach($data['all_status'] as $s)
                             <th class="p-2 fs-6 fw-bolder">{{$s->status}}</th>
+                            @php 
+                                $subtotal[$s->status] = 0;
+                            @endphp
                             @endforeach
+                            <th class="p-2 fs-6 fw-bolder">TOTAL</th>
+                            @php
+                                $total = 0;
+                            @endphp
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($data['all_region'] as $r)
                         <tr>
                             <td class="p-2 fs-6">{{$r->region}}</td>
+                            @php 
+                                $region[$r->region] = 0;
+                            @endphp
                             @foreach($data['all_status'] as $s)
                             <td class="p-2 fs-6"><a target="_blank" href="{{ url('/dashboard/list_document')}}?region={{$r->region}}&status={{$s->status}}">{{$data['count'][$r->region][$s->status]}}</a></td>
+                                @php 
+                                    $subtotal[$s->status] += $data['count'][$r->region][$s->status];
+                                    $region[$r->region] += $data['count'][$r->region][$s->status];
+                                    $total += $data['count'][$r->region][$s->status];
+                                @endphp
                             @endforeach
+                            <td><a target="_blank" href="{{ url('/dashboard/list_document')}}?region={{$r->region}}">{{$region[$r->region]}}</a></td>
                         </tr>
                         @endforeach
+                        <tr>
+                            <td class="p-2 fs-6 fw-bolder">Subtotal</td>
+                            @foreach($data['all_status'] as $s)
+                            <td class="p-2 fs-6"><a target="_blank" href="{{ url('/dashboard/list_document')}}?status={{$s->status}}">{{$subtotal[$s->status]}}</a></td>
+                            @endforeach
+                            <td><a target="_blank" href="{{ url('/dashboard/list_document')}}">{{$total}}</a></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

@@ -40,7 +40,7 @@ class MainController extends Controller
                                                             ->groupBy('d.region', 'ms.status')
                                                             ->get();
         $data['all_status'] = DB::table('master_status')->select('*')->get();
-        $data['all_region'] = DB::table('document_tracking')->select(DB::raw('DISTINCT region as region'))->orderBy('region','asc')->get();
+        $data['all_region'] = DB::table('master_area')->select('*')->orderBy('id','asc')->get();
         foreach($data['all_region'] as $r){
             foreach($data['all_status'] as $s){
                 $data['count'][$r->region][$s->status] = 0;
@@ -78,8 +78,27 @@ class MainController extends Controller
                                                             ->leftJoin('master_status as ms', 'ms.id', '=', 'd.id_status')
                                                             ->orderBy('d.id_status', 'asc')
                                                             ->get();
+        foreach($data['document'] as $key => $d){
+            if ($d->vp_proc_date != null){
+                $data['document'][$key]->last_date = $d->vp_proc_date;
+            } else if ($d->mgr_proc_date != null){
+                $data['document'][$key]->last_date = $d->mgr_proc_date;
+            } else if ($d->gm_cons_date != null){
+                $data['document'][$key]->last_date = $d->gm_cons_date;
+            } else if ($d->mgr_cons_date != null){
+                $data['document'][$key]->last_date = $d->mgr_cons_date;
+            } else if ($d->gm_area_date != null){
+                $data['document'][$key]->last_date = $d->gm_area_date;
+            } else if ($d->mgr_region_date != null){
+                $data['document'][$key]->last_date = $d->mgr_region_date;
+            } else if ($d->pm_date != null){
+                $data['document'][$key]->last_date = $d->pm_date;
+            } else {
+                $data['document'][$key]->last_date = $d->created_at;
+            }
+        }
         $data['all_status'] = DB::table('master_status')->select('*')->get();
-        $data['all_region'] = DB::table('document_tracking')->select(DB::raw('DISTINCT region as region'))->orderBy('region','asc')->get();
+        $data['all_region'] = DB::table('master_area')->select('*')->orderBy('id','asc')->get();
         $data['all_scope'] = DB::table('document_tracking')->select(DB::raw('DISTINCT scope as scope'))->orderBy('scope','asc')->get();
         $data['all_supplier_name'] = DB::table('document_tracking')->select(DB::raw('DISTINCT supplier_name as supplier_name'))->orderBy('supplier_name','asc')->get();
         return view('list_document', compact('data'));
@@ -109,6 +128,25 @@ class MainController extends Controller
             return redirect()->route('dashboard')->with('error', 'Data dokumen tidak ditemukan, mohon cek kembali URL anda');
         }
         $data['document'] = $data['document']->first();
+        $d = $data['document'];
+        if ($d->vp_proc_date != null){
+            $data['document']->last_date = $d->vp_proc_date;
+        } else if ($d->mgr_proc_date != null){
+            $data['document']->last_date = $d->mgr_proc_date;
+        } else if ($d->gm_cons_date != null){
+            $data['document']->last_date = $d->gm_cons_date;
+        } else if ($d->mgr_cons_date != null){
+            $data['document']->last_date = $d->mgr_cons_date;
+        } else if ($d->gm_area_date != null){
+            $data['document']->last_date = $d->gm_area_date;
+        } else if ($d->mgr_region_date != null){
+            $data['document']->last_date = $d->mgr_region_date;
+        } else if ($d->pm_date != null){
+            $data['document']->last_date = $d->pm_date;
+        } else {
+            $data['document']->last_date = $d->created_at;
+        }
+        $data['aging'] = floor((strtotime(now()) - strtotime($data['document']->last_date)) / 86400);
         $doc = $data['document'];
         if ($doc->vp_proc_date != null){
             $data['latest_document'] = explode('|', $doc->vp_proc_doc);
@@ -128,6 +166,7 @@ class MainController extends Controller
             $data['latest_document'] = [];
         }
         $data['privilege'] = 0;
+        $data['privilege_proc'] = 0;
         if (($nik_tg == '935378') && ($doc->id_status != 8)){
             $data['privilege'] = 1;
             if ($doc->id_status == 1){
@@ -142,6 +181,7 @@ class MainController extends Controller
                 $data['latest_pic'] = 'GM Construction';
             } else if ($doc->id_status == 6){
                 $data['latest_pic'] = 'MGR Procurement';
+                $data['privilege_proc'] = 1;
             } else if ($doc->id_status == 7){
                 $data['latest_pic'] = 'VP Procurement';
             }
@@ -169,6 +209,7 @@ class MainController extends Controller
         if (($doc->id_status == 6) && ($doc->mgr_proc_nik == $nik_tg)){
             $data['privilege'] = 1;
             $data['latest_pic'] = 'MGR Procurement';
+            $data['privilege_proc'] = 1;
         }
         if (($doc->id_status == 7) && ($doc->vp_proc_nik == $nik_tg)){
             $data['privilege'] = 1;
@@ -256,12 +297,23 @@ class MainController extends Controller
                 $column2 = 'temp_date';
             }
             $doc = implode('|', $array_filename);
-            $update = DB::table('document_tracking')->where('id', $id)
-                                                    ->update([
-                                                        'id_status' => $status,
-                                                        $column => $doc,
-                                                        $column2 => date('Y-m-d H:i:s')
-                                                    ]);
+            $input = $request->all();
+            if ($check->id_status == 6){
+                $update = DB::table('document_tracking')->where('id', $id)
+                                                        ->update([
+                                                            'id_status' => $status,
+                                                            $column => $doc,
+                                                            $column2 => date('Y-m-d H:i:s'),
+                                                            'amount_proc' => $input['amount_proc']
+                                                        ]);
+            } else {
+                $update = DB::table('document_tracking')->where('id', $id)
+                                                        ->update([
+                                                            'id_status' => $status,
+                                                            $column => $doc,
+                                                            $column2 => date('Y-m-d H:i:s')
+                                                        ]);
+            }
             $activity = 'Success Update Progress Document ID '.$id;
             $status = 'SUCCESS';
             $datetime = date('Y-m-d H:i:s');
