@@ -1,7 +1,7 @@
 <!-- Pakai syntax ini untuk validasi menu yang aktif-->
 @php 
     $path = $_SERVER['REQUEST_URI'];
-    $path_short = explode('/document', $path);
+    $path_short = explode('/trackingspmk', $path);
     $path_cut_1 = explode('?', $path_short[1]);
     $path_cut_2 = explode('#', $path_cut_1[0]);
     $path_current = explode('/', $path_cut_2[0]);

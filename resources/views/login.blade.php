@@ -22,7 +22,7 @@
                     <div class="text-gray-400 fw-bold fs-4">Selamat Datang</div>
                     <!--end::Link-->
                     <!--begin::Title-->
-                    <h1 class="text-dark mb-3">Sign In to Temporary Tracking SPMK</h1>
+                    <h1 class="text-dark mb-3">Sign In to Tracking SPMK</h1>
                     <!--end::Title-->
                 </div>
                 <!--begin::Heading-->
