@@ -62,7 +62,7 @@
                         <tr>
                             <td class="p-2 fs-6">{{$r->region}}</td>
                             @foreach($data['all_status'] as $s)
-                            <td class="p-2 fs-6"><a href="{{ url('/dashboard/list_document')}}?region={{$r->region}}&status={{$s->status}}">{{$data['count'][$r->region][$s->status]}}</a></td>
+                            <td class="p-2 fs-6"><a target="_blank" href="{{ url('/dashboard/list_document')}}?region={{$r->region}}&status={{$s->status}}">{{$data['count'][$r->region][$s->status]}}</a></td>
                             @endforeach
                         </tr>
                         @endforeach
