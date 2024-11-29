@@ -285,6 +285,12 @@
                                 @csrf
                                 <div class="fs-1 fw-bolder mb-5">Update Progress as {{$data['latest_pic']}}:</div>
                                 <div class="fv-row fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
+                                    <!--begin::Label-->
+                                    <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
+                                        <span class="required">Upload Document (pdf)</span>
+                                        <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Amount Procurement"></i>
+                                    </label>
+                                    <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="file" name="document[]" multiple="multiple" class="form-control form-control-solid" accept=".pdf" required>
                                     <!--end::Input-->
@@ -294,7 +300,7 @@
                                 <div class="fv-row fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
                                     <!--begin::Label-->
                                     <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
-                                        <span class="required">Amount</span>
+                                        <span class="required">Amount by Procurement</span>
                                         <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Amount Procurement"></i>
                                     </label>
                                     <!--end::Label-->

@@ -235,32 +235,38 @@ class MainController extends Controller
             $files = $request->file('document');
             $array_filename = [];
             foreach($files as $key => $file){
-                $count = $check->id.rand(0,10000);
-                $fileName = $count.'_'.$file->getClientOriginalName();
-                $move = $file->move(public_path('storage'), $fileName);
-                if ($move){
-                    $array_filename[] = $fileName;
-                    $datetime = date('Y-m-d H:i:s');
-                    $activity = 'Success Upload Document File in Detail Document file '.$fileName;
-                    $status = 'SUCCESS';
-                    DB::table('log')->insert([
-                        'nik_tg' => $nik_tg,
-                        'activity' => $activity,
-                        'status' => $status,
-                        'datetime' => $datetime
-                    ]);
+                $ext = $file->extension();
+                if (($ext == 'pdf') || ($ext == 'PDF')) {
+                    $count = $check->id.rand(0,10000);
+                    $fileName = $count.'_'.$file->getClientOriginalName();
+                    $move = $file->move(public_path('storage'), $fileName);
+                    if ($move){
+                        $array_filename[] = $fileName;
+                        $datetime = date('Y-m-d H:i:s');
+                        $activity = 'Success Upload Document File in Detail Document file '.$fileName;
+                        $status = 'SUCCESS';
+                        DB::table('log')->insert([
+                            'nik_tg' => $nik_tg,
+                            'activity' => $activity,
+                            'status' => $status,
+                            'datetime' => $datetime
+                        ]);
+                    } else {
+                        $activity = 'Failed Upload Document File in Detail Document';
+                        $status = 'ERROR';
+                        $datetime = date('Y-m-d H:i:s');
+                        DB::table('log')->insert([
+                            'nik_tg' => $nik_tg,
+                            'activity' => $activity,
+                            'status' => $status,
+                            'datetime' => $datetime
+                        ]);
+                        return back()
+                        ->with('error', 'Gagal mengupload file dokumen. Mohon kontak admin IT.');
+                    }
                 } else {
-                    $activity = 'Failed Upload Document File in Detail Document';
-                    $status = 'ERROR';
-                    $datetime = date('Y-m-d H:i:s');
-                    DB::table('log')->insert([
-                        'nik_tg' => $nik_tg,
-                        'activity' => $activity,
-                        'status' => $status,
-                        'datetime' => $datetime
-                    ]);
                     return back()
-                    ->with('error', 'Gagal mengupload file dokumen. Mohon kontak admin IT.');
+                        ->with('error', 'Gagal mengupload file dokumen. Harus extension pdf!');
                 }
             }
             if ($check->id_status == 1){
