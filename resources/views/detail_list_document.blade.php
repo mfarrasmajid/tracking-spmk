@@ -274,7 +274,7 @@
                         <div class="mb-2">
                             <div class="fs-5 fw-bolder">Get Latest Document:</div>
                             @foreach($data['latest_document'] as $l)
-                            <div><a href="{{ asset('/storage')}}/{{$l}}">{{$l}}</a></div>
+                            <div><a href="{{ asset('/storage')}}/{{$l}}" target="_blank">{{$l}}</a></div>
                             @endforeach
                         </div>
                     </div>
@@ -285,12 +285,6 @@
                                 @csrf
                                 <div class="fs-1 fw-bolder mb-5">Update Progress as {{$data['latest_pic']}}:</div>
                                 <div class="fv-row fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
-                                    <!--begin::Label-->
-                                    <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
-                                        <span class="required">Upload Document (pdf) bisa lebih dari 1</span>
-                                        <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Upload document"></i>
-                                    </label>
-                                    <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="file" name="document[]" multiple="multiple" class="form-control form-control-solid" accept=".pdf" required>
                                     <!--end::Input-->
@@ -305,7 +299,7 @@
                                     </label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
-                                    <input type="text" name="amount_proc" class="form-control form-control-solid" required>
+                                    <input type="text" name="amount_proc" class="form-control form-control-solid number" required>
                                     <!--end::Input-->
                                     <div class="fv-plugins-message-container invalid-feedback"></div>
                                 </div>
@@ -339,6 +333,10 @@
 @section('scripts')
 <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+<script src="{{ asset('assets/jquery.number.min.js')}}"></script>
 <script>
+    $(document).ready(function () {     
+        $('input.number').number(true, 0, ',', '.');
+    })
 </script>
 @stop 

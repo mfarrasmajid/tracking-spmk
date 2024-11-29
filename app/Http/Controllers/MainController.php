@@ -304,7 +304,7 @@ class MainController extends Controller
                                                             'id_status' => $status,
                                                             $column => $doc,
                                                             $column2 => date('Y-m-d H:i:s'),
-                                                            'amount_proc' => $input['amount_proc']
+                                                            'amount_proc' => str_replace('.','',$input['amount_proc'])
                                                         ]);
             } else {
                 $update = DB::table('document_tracking')->where('id', $id)
