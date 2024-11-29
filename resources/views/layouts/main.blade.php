@@ -2,9 +2,9 @@
 <html lang="en">
 	<!--begin::Head-->
 	<head>
-		<title>Absensi Radir | @yield('title')</title>
+		<title>Temporary Tracking SPMK | @yield('title')</title>
 		<meta charset="utf-8" />
-		<meta name="description" content="Aplikasi Absensi Radir " />
+		<meta name="description" content="Temporary Tracking SPMK" />
 		<meta name="keywords" content="Absensi, Radir, Mitratel" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="shortcut icon" href="{{ asset('icon.ico')}}" />
