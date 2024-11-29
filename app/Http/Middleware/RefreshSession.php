@@ -17,11 +17,12 @@ class RefreshSession
     public function handle(Request $request, Closure $next)
     {
         if ($request->session()->has('id')){
-            $user = DB::table('users')->select('*')
+            $user = DB::table('hcm.users')->select('*')
                                       ->where('id', $request->session()->get('id'))
                                       ->get();
             if (count($user) > 0){
                 $u = $user->first();
+                $request->session()->put('user', $u);
                 $request->session()->put('nik_tg', $u->nik_tg);
                 $request->session()->put('name', $u->name);
                 $request->session()->put('email', $u->email);

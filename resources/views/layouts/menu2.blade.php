@@ -1,7 +1,7 @@
 <!-- Pakai syntax ini untuk validasi menu yang aktif-->
 @php 
     $path = $_SERVER['REQUEST_URI'];
-    $path_short = explode('/absensi', $path);
+    $path_short = explode('/document', $path);
     $path_cut_1 = explode('?', $path_short[1]);
     $path_cut_2 = explode('#', $path_cut_1[0]);
     $path_current = explode('/', $path_cut_2[0]);
@@ -22,23 +22,7 @@
                     <div class="d-flex flex-column flex-lg-row flex-lg-stack flex-wrap gap-2 px-4 px-lg-0">
                         <div class="d-flex flex-column flex-lg-row gap-2">
                             <a class="btn btn-sm btn-light-danger fw-bolder" href="{{ url('/dashboard') }}">Dashboard</a>
-                            <a class="btn btn-sm btn-light-danger fw-bolder" href="{{ url('/dashboard/main_board') }}">Main Board Utama</a>
-                            <a class="btn btn-sm btn-light-danger fw-bolder" href="{{ url('/dashboard/main_board_khusus') }}">Main Board Khusus</a>
-                        </div>
-                    </div>
-                    <!--end::Wrapper-->
-                </div>
-                <!--end::Tab panel-->
-                <!--begin::Tab panel-->
-<!-- VALIDASI DIBAWAH SINI -->
-                <div class="tab-pane fade @if (count($path_current) >= 2) @if ($path_current[1] == 'admin') active show @endif @endif" id="kt_header_navs_tab_2">
-                    <!--begin::Wrapper-->
-                    <div class="d-flex flex-column flex-lg-row flex-lg-stack flex-wrap gap-2 px-4 px-lg-0">
-                        <div class="d-flex flex-column flex-lg-row gap-2">
-                            <a class="btn btn-sm btn-light-danger fw-bolder" href="{{ url('/admin/manage_peserta') }}">Manage Peserta Radir</a>
-                            <a class="btn btn-sm btn-light-danger fw-bolder" href="{{ url('/admin/manage_peserta_event') }}">Manage Peserta Event</a>
-                            <a class="btn btn-sm btn-light-danger fw-bolder" href="{{ url('/admin/manage_admin') }}">Manage Admin</a>
-                            <a class="btn btn-sm btn-light-success fw-bolder" href="{{ url('/admin/download_excel') }}">Download Excel</a>
+                            <a class="btn btn-sm btn-light-danger fw-bolder" href="{{ url('/dashboard/list_document') }}">List Dokumen</a>
                         </div>
                     </div>
                     <!--end::Wrapper-->

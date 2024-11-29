@@ -48,7 +48,7 @@ class AuthController extends Controller
         $status = "ERROR";
 
         if($statusx){
-            $check = DB::table('users')->where('nik_tg', $username)->select('*')->get();
+            $check = DB::table('hcm.users')->where('nik_tg', $username)->select('*')->get();
             if (count($check) > 0){
                 $check = $check->first();
                 $id = $check->id;
@@ -61,9 +61,6 @@ class AuthController extends Controller
                     'status' => $status,
                     'datetime' => $datetime
                 ]);
-                $last_login = DB::table('users')->where('id', $id)->update([
-                    'last_login' => $datetime
-                ]);
                 return redirect()->route('dashboard');
             } else {
                 $log = DB::table('log')->insert([
@@ -75,7 +72,7 @@ class AuthController extends Controller
                 return redirect()->route('login')->with('error', 'Username not found');
             }
         } else {
-            $check = DB::table('users')->where('nik_tg', $username)->orWhere('email', $username)->select('*')->get();
+            $check = DB::table('hcm.users')->where('nik_tg', $username)->orWhere('email', $username)->select('*')->get();
             if (count($check) > 0) {
                 $check = $check->first();
                 if (Hash::check($password, $check->password)){
@@ -88,9 +85,6 @@ class AuthController extends Controller
                         'activity' => $activity,
                         'status' => $status,
                         'datetime' => $datetime
-                    ]);
-                    $last_login = DB::table('users')->where('id', $id)->update([
-                        'last_login' => $datetime
                     ]);
                     return redirect()->route('dashboard');
                 } else {
@@ -117,13 +111,10 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $id = $request->session()->get('id');
-        $nik_tg = $request->session()->get('nik_tg');
+        $nik_tg = $request->session()->get('user')->nik_tg;
         $activity = "Successful Logout From Username ".$nik_tg;
         $status = "SUCCESS";
         $datetime = date('Y-m-d H:i:s');
-        $last_logout = DB::table('users')->where('id', $id)->update([
-            'last_logout' => $datetime
-        ]);
         $log = DB::table('log')->insert([
             'nik_tg' => $nik_tg,
             'activity' => $activity,

@@ -1,10 +1,10 @@
 @extends('layouts.main')
 
-@section('title', 'Dashboard')
+@section('title', 'Dashboard Document Tracking')
 
-@section('menu', 'Dashboard Absensi Radir')
+@section('menu', 'Tabel Dokumen')
 
-@section('sub_menu', 'Pilih Board Radir Untuk Mulai')
+@section('sub_menu', 'Jumlah dokumen dan statusnya')
 
 @section('contents')
 <div class="card">
@@ -46,44 +46,28 @@
         </div>
         @endif
         <div class="row">
-            <div class="col-md-6 offset-md-3">
-                <div class="text-center bg-light card-rounded d-flex flex-column justify-content-center px-5 mb-5">
-                    <!--begin::Icon-->
-                    <!--SVG file not found: icons/duotune/finance/fin006.svgPhone.svg-->
-                    <!--end::Icon-->
-                    <!--begin::Subtitle-->
-                    <h1 class="text-dark fw-bolder my-5">Mulai Absensi</h1>
-                    <!--end::Subtitle-->
-                    <!--begin::Number-->
-                    <a href="{{ url('dashboard/main_board')}}" class="btn btn-block btn-danger mb-5">Main Board Absensi Radir Biasa</a>
-                    <!--end::Number-->
-                    <!--begin::Number-->
-                    <a href="{{ url('dashboard/main_board_khusus')}}" class="btn btn-block btn-danger mb-5">Main Board Absensi Radir Khusus</a>
-                    <!--end::Number-->
-                    <!--begin::Number-->
-                    <a href="{{ url('dashboard/main_event/1')}}" class="btn btn-block btn-danger mb-5">Main Board Absensi Launching Go-Live OneFlux</a>
-                    <!--end::Number-->
-                    <!--begin::Number-->
-                    <a href="{{ url('dashboard/main_event/2')}}" class="btn btn-block btn-danger mb-5">Main Board Absensi Rakor Diropbang 2023</a>
-                    <!--end::Number-->
-                </div>
-                <div class="text-center bg-light card-rounded d-flex flex-column justify-content-center px-5">
-                    <!--begin::Icon-->
-                    <!--SVG file not found: icons/duotune/finance/fin006.svgPhone.svg-->
-                    <!--end::Icon-->
-                    <!--begin::Subtitle-->
-                    <h1 class="text-dark fw-bolder my-5">Reset Absen Hari Ini</h1>
-                    <!--end::Subtitle-->
-                    <!--begin::Number-->
-                    <button class="btn btn-block btn-danger reset-absen mb-5">Reset Absen</button>
-                    <!--end::Number-->
-                    <!--begin::Number-->
-                    <button class="btn btn-block btn-danger reset-absen-1 mb-5">Reset Absen Event Go-Live OneFlux</button>
-                    <!--end::Number-->
-                    <!--begin::Number-->
-                    <button class="btn btn-block btn-danger reset-absen-2 mb-5">Reset Absen Event Radir Diropbang</button>
-                    <!--end::Number-->
-                </div>
+            <div class="fs-1 mb-5 fw-bolder">Dashboard Document Tracking</div>
+            <div class="col-lg-12">
+                <table class="table table-row-bordered">
+                    <thead>
+                        <tr>
+                            <th class="p-2 fs-6 fw-bolder">Regional</th>
+                            @foreach($data['all_status'] as $s)
+                            <th class="p-2 fs-6 fw-bolder">{{$s->status}}</th>
+                            @endforeach
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($data['all_region'] as $r)
+                        <tr>
+                            <td class="p-2 fs-6">{{$r->region}}</td>
+                            @foreach($data['all_status'] as $s)
+                            <td class="p-2 fs-6"><a href="{{ url('/dashboard/list_document')}}?region={{$r->region}}&status={{$s->status}}">{{$data['count'][$r->region][$s->status]}}</a></td>
+                            @endforeach
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -100,118 +84,5 @@
 @section('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
 <script>
-    jQuery(document).ready(function() {
-        $('.reset-absen').on('click', function(){
-            $.confirm({
-                title: 'Reset Absen!',
-                content: 'Apakah anda yakin akan menghapus absen semua peserta hari ini?',
-                type: 'red',
-                buttons: {
-                    hapus: {
-                        text: 'Hapus',
-                        btnClass: 'btn-red',
-                        action : function () {
-                            $.ajax({
-                                url: '{{ url("/api/reset_absen")}}',
-                                data: $('#csrf_dummy').serialize(),
-                                method: 'POST',
-                                success : function() {
-                                    location.reload();
-                                },
-                                error : function (e) {
-                                    console.log(e);
-                                    $.alert({
-                                        title: 'Error!',
-                                        content: 'Reset Absen Failed',
-                                    });
-                                }
-                            });
-                        },
-                    },
-                    cancel: {
-                        text: 'Cancel',
-                        keys: ['enter', 'shift'],
-                        action : function () {
-                        
-                        },
-                    }
-                }
-            });  
-        })       
-        $('.reset-absen-1').on('click', function(){
-            $.confirm({
-                title: 'Reset Absen!',
-                content: 'Apakah anda yakin akan menghapus absen semua peserta hari ini?',
-                type: 'red',
-                buttons: {
-                    hapus: {
-                        text: 'Hapus',
-                        btnClass: 'btn-red',
-                        action : function () {
-                            $.ajax({
-                                url: '{{ url("/api/reset_absen_event")}}/1',
-                                data: $('#csrf_dummy').serialize(),
-                                method: 'POST',
-                                success : function() {
-                                    location.reload();
-                                },
-                                error : function (e) {
-                                    console.log(e);
-                                    $.alert({
-                                        title: 'Error!',
-                                        content: 'Reset Absen Failed',
-                                    });
-                                }
-                            });
-                        },
-                    },
-                    cancel: {
-                        text: 'Cancel',
-                        keys: ['enter', 'shift'],
-                        action : function () {
-                        
-                        },
-                    }
-                }
-            });  
-        })      
-        $('.reset-absen-2').on('click', function(){
-            $.confirm({
-                title: 'Reset Absen!',
-                content: 'Apakah anda yakin akan menghapus absen semua peserta hari ini?',
-                type: 'red',
-                buttons: {
-                    hapus: {
-                        text: 'Hapus',
-                        btnClass: 'btn-red',
-                        action : function () {
-                            $.ajax({
-                                url: '{{ url("/api/reset_absen_event")}}/2',
-                                data: $('#csrf_dummy').serialize(),
-                                method: 'POST',
-                                success : function() {
-                                    location.reload();
-                                },
-                                error : function (e) {
-                                    console.log(e);
-                                    $.alert({
-                                        title: 'Error!',
-                                        content: 'Reset Absen Failed',
-                                    });
-                                }
-                            });
-                        },
-                    },
-                    cancel: {
-                        text: 'Cancel',
-                        keys: ['enter', 'shift'],
-                        action : function () {
-                        
-                        },
-                    }
-                }
-            });  
-        })          
-    });
 </script>
 @stop

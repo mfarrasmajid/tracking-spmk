@@ -22,7 +22,7 @@
                     <div class="text-gray-400 fw-bold fs-4">Selamat Datang</div>
                     <!--end::Link-->
                     <!--begin::Title-->
-                    <h1 class="text-dark mb-3">Sign In to Absensi Digital</h1>
+                    <h1 class="text-dark mb-3">Sign In to Temporary Tracking SPMK</h1>
                     <!--end::Title-->
                 </div>
                 <!--begin::Heading-->
@@ -32,7 +32,7 @@
                     <div class="text-danger mb-5">{{ session('error') }}</div>
                     @endif
                     <!--begin::Label-->
-                    <label class="form-label fs-6 fw-bolder text-dark">NIK TG</label>
+                    <label class="form-label fs-6 fw-bolder text-dark">NIK</label>
                     <!--end::Label-->
                     <!--begin::Input-->
                     <input class="form-control form-control-lg form-control-solid" type="text" name="nik_tg"/>

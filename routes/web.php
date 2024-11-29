@@ -19,6 +19,9 @@ Route::get('/logout', 'AuthController@logout')->name('logout');
 // DASHBOBARD
 Route::get('/', 'MainController@base');
 Route::get('/dashboard', 'MainController@dashboard')->name('dashboard');
+Route::get('/dashboard/list_document', 'MainController@list_document')->name('list_document');
+Route::get('/dashboard/list_document/{id}', 'MainController@detail_list_document')->name('detail_list_document');
+Route::post('/dashboard/list_document/{id}', 'MainController@submit_detail_list_document')->name('submit_detail_list_document');
 Route::get('/dashboard/main_board', 'MainController@main_board')->name('main_board');
 Route::get('/dashboard/main_board_khusus', 'MainController@main_board_khusus')->name('main_board_khusus');
 Route::get('/dashboard/main_event/{id}', 'MainController@main_event')->name('main_event');

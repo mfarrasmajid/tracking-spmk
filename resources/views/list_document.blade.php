@@ -1,10 +1,10 @@
 @extends('layouts.main')
 
-@section('title', 'Manage Peserta Event')
+@section('title', 'List Document')
 
-@section('menu', 'Manage Peserta Event')
+@section('menu', 'List Document')
 
-@section('sub_menu', 'Tambahkan atau Edit Peserta Event yang Dapat Akses ke Event')
+@section('sub_menu', 'List Tracking SPMK')
 
 @section('contents')
 <div class="card card-custom">
@@ -13,13 +13,9 @@
             <span class="card-icon">
                 <i class="flaticon2-layers text-primary"></i>
             </span>
-            <h3 class="card-label">Manage Peserta Event</h3>
+            <h3 class="card-label">List Document</h3>
         </div>
         <div class="card-toolbar">
-            <!--begin::Button-->
-            <a href="{{ url('/admin/add_peserta_event') }}" class="btn btn-danger font-weight-bolder">
-            <i class="la la-plus"></i>Add Peserta</a>
-            <!--end::Button-->
         </div>
     </div>
     <div class="card-body">
@@ -59,53 +55,89 @@
             </button>
         </div>
         @endif
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="fv-row mb-10 fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
+                    <!--begin::Label-->
+                    <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
+                        <span>Filter Regional</span>
+                        <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Filter regional"></i>
+                    </label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <select name="region" class="form-select form-select-solid" data-control="select2" data-allow-clear="true" data-placeholder="Regional">
+                        <option></option>
+                        @foreach($data['all_region'] as $r)
+                        <option value="{{$r->region}}" @if (isset($data['q_region'])) @if($data['q_region'] == $r->region) selected @endif @endif>{{$r->region}}</option>
+                        @endforeach
+                    </select>
+                    <!--end::Input-->
+                    <div class="fv-plugins-message-container invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="fv-row mb-10 fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
+                    <!--begin::Label-->
+                    <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
+                        <span>Filter Status</span>
+                        <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Filter status"></i>
+                    </label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <select name="status" class="form-select form-select-solid" data-control="select2" data-allow-clear="true" data-placeholder="Status">
+                        <option></option>
+                        @foreach($data['all_status'] as $s)
+                        <option value="{{$s->status}}" @if (isset($data['q_status'])) @if($data['q_status'] == $s->status) selected @endif @endif>{{$s->status}}</option>
+                        @endforeach
+                    </select>
+                    <!--end::Input-->
+                    <div class="fv-plugins-message-container invalid-feedback"></div>
+                </div>
+            </div>
+        </div>
         <!--begin: Datatable-->
         <table class="table table-row-bordered gy-5" id="kt_datatable">
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Event</th>
-                    <th>NIK TG</th>
-                    <th>Name</th>
-                    <th>Posisi</th>
-                    <th>Company</th>
-                    <th>Priority</th>
-                    <th>Priority Number</th>
-                    <th>Photo</th>
+                    <th>PID</th>
+                    <th>Site Name</th>
+                    <th>Region</th>
+                    <th>Scope</th>
+                    <th>Amount</th>
+                    <th>Supplier Name</th>
+                    <th>SPMK</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($data['peserta_event'] as $u)
+                @foreach($data['document'] as $d)
                 <tr>
                     <td>{{$loop->iteration}}</td>
-                    <td>{{$u->event}}</td>
-                    <td>{{$u->nik_tg}}</td>
-                    <td>{{$u->name}}</td>
-                    <td>{{$u->posisi}}</td>
-                    <td>{{$u->company}}</td>
-                    <td>{{$u->priority_name}}</td>
-                    @php if ($u->priority_number < 100) {
-                        $u->priority_number = '0'.$u->priority_number;
-                    }
-                    @endphp
-                    <td>{{$u->priority}}-{{$u->priority_number}}</td>  
-                    <td><img src="{{asset('eviden')}}/{{$u->photo}}" class="h-50px" alt="Photo"></td>
-                    <td>{{$u->id}}</td>
+                    <td>{{$d->pid}}</td>
+                    <td>{{$d->site_name}}</td>
+                    <td>{{$d->region}}</td>
+                    <td>{{$d->scope}}</td>
+                    <td>{{$d->amount}}</td>
+                    <td>{{$d->supplier_name}}</td>
+                    <td>{{$d->spmk}}</td>
+                    <td><span class="badge badge-sm badge-{{$d->class}}">{{$d->status}}</span></td>
+                    <td>{{$d->id}}</td>
                 </tr>
                 @endforeach
             </tbody>
             <tfoot>
                 <tr>
                     <th>No</th>
-                    <th>Event</th>
-                    <th>NIK TG</th>
-                    <th>Name</th>
-                    <th>Posisi</th>
-                    <th>Company</th>
-                    <th>Priority</th>
-                    <th>Priority Number</th>
-                    <th>Photo</th>
+                    <th>PID</th>
+                    <th>Site Name</th>
+                    <th>Region</th>
+                    <th>Scope</th>
+                    <th>Amount</th>
+                    <th>Supplier Name</th>
+                    <th>SPMK</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </tfoot>
@@ -137,11 +169,11 @@
 		var table = $('#kt_datatable');
 
 		// begin first table
-		table.DataTable({
-            dom: `<'row'<'col-sm-6 text-left'f><'col-sm-6 text-right'B>>
+		datatable = table.DataTable({
+            dom: `<'row'<'col-sm-6 text-start'B><'col-sm-6 text-end'f>>
             <'row'<'col-sm-12'tr>>
-			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
-            lengthMenu: [5, 10, 25, 50],
+			<'row'<'col-sm-12 col-md-5'il><'col-sm-12 col-md-7 dataTables_pager'p>>`,
+            lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
 
             buttons: [
 				'print',
@@ -150,6 +182,7 @@
 				'csvHtml5',
 				'pdfHtml5',
 			],
+
             pageLength: 10,
 			responsive: true,
 			paging: true,
@@ -159,54 +192,34 @@
                     orderable: false,
                     render: function(data, type, full, meta) {
                         return '\
-							<a href="{{url("/admin/add_peserta_event/")}}/' + data + '" class="btn btn-sm btn-clean btn-icon" title="Edit">\
+							<a href="{{url("/dashboard/list_document")}}/' + data + '" class="btn btn-sm btn-clean btn-icon" title="Edit">\
 								<i class="la la-edit"></i>\
-							</a>\
-							<a href="javascript:;" data-id="' + data + '" class="btn btn-sm btn-clean btn-icon manage-delete" title="Delete">\
-								<i class="la la-trash"></i>\
 							</a>\
 						';
                     },
                 },
             ],
-		}).on('click', '.manage-delete', function(){
-            var id = $(this).data('id');
-            $.confirm({
-                title: 'Delete Peserta!',
-                content: 'Apakah anda yakin akan menghapus peserta ini?',
-                type: 'red',
-                buttons: {
-                    hapus: {
-                        text: 'Hapus',
-                        btnClass: 'btn-red',
-                        action : function () {
-                            $.ajax({
-                                url: '{{ url("/admin/delete_peserta_event")}}/' + id,
-                                data: $('#csrf_dummy').serialize(),
-                                method: 'POST',
-                                success : function() {
-                                    location.reload();
-                                },
-                                error : function (e) {
-                                    console.log(e);
-                                    $.alert({
-                                        title: 'Error!',
-                                        content: 'Delete Peserta Failed',
-                                    });
-                                }
-                            });
-                        },
-                    },
-                    cancel: {
-                        text: 'Cancel',
-                        keys: ['enter', 'shift'],
-                        action : function () {
-                        
-                        },
-                    }
-                }
-            });                      
+		});
+
+        $('select[name="region"]').on('change', function(){
+          datatable.columns(3).search(this.value).draw();   
+            $($.fn.dataTable.tables(true)).DataTable()
+        .columns.adjust();
         });
+
+        @if (isset($data['q_region']))
+            datatable.columns(3).search("{{$data['q_region']}}").draw();   
+        @endif
+
+        $('select[name="status"]').on('change', function(){
+          datatable.columns(8).search(this.value).draw();   
+            $($.fn.dataTable.tables(true)).DataTable()
+        .columns.adjust();
+        });
+
+        @if (isset($data['q_status']))
+            datatable.columns(8).search("{{$data['q_status']}}").draw();   
+        @endif
 	};
 
 	return {

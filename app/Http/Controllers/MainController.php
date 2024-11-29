@@ -19,538 +19,253 @@ class MainController extends Controller
 
     public function dashboard(Request $request)
     {
-        return view('dashboard');
-    }
-
-    public function main_board(Request $request)
-    {
-        $data['date'] = date('d M Y');
-        $data['peserta'] = DB::table('peserta_radir')->select('*')->where('group', 'LIKE', '%1%')->orderBy('priority', 'ASC')->orderBy('priority_number', 'ASC')->get();
-        return view('main_board', compact('data'));
-    }
-
-    public function main_board_khusus(Request $request)
-    {
-        $data['date'] = date('d M Y');
-        $data['peserta'] = DB::table('peserta_radir')->select('*')->where('group', 'LIKE', '%2%')->orderBy('priority', 'ASC')->orderBy('priority_number', 'ASC')->get();
-        return view('main_board_khusus', compact('data'));
-    }
-
-    public function main_event(Request $request, $id)
-    {
-        $data['date'] = date('d M Y');
-        $data['id'] = $id;
-        $data['peserta_event'] = DB::table('peserta_event')->select('*')->where('event_id', $id)->orderBy('priority_number', 'ASC')->get();
-        $data['event_list'] = DB::table('event_list')->where('id', $id)->get()->first();
-        return view('main_event', compact('data'));
-    }
-
-    public function manage_admin (Request $request) 
-    {
-        $data['admin'] = DB::table('users')->get();
-        return view('admin.manage_admin', compact('data'));
-    }
-
-    public function add_admin (Request $request, $id = NULL)
-    {
-        if ($id != NULL){
-            $data['admin'] = DB::table('users')->where('id', $id)->select('*')->get();
-        } else {
-            $data = [];
-            return view('admin.add_admin', compact('data'));
-        }
-        if (count($data['admin']) == 0){
-            return redirect()->route('manage_admin')->with('error', 'Admin with ID '.$id.' Not Found, Please Check Again Your URL');
-        } else {
-            $data['id'] = $id;
-            $data['admin'] = $data['admin']->first();
-            return view('admin.add_admin', compact('data'));
-        }
-    }
-
-    public function submit_admin (Request $request, $id = NULL)
-    {
-        $nik_tg = $request->session()->get('nik_tg');
-        $datetime = date('Y-m-d H:i:s');
-        $data = $request->all();
-        $password = "047ff07257cc632dc6a208adb5098e57";
-        if ($id != NULL){
-            $check = DB::table('users')->where('id', $id)->select('*')->get();
-            if (count($check) > 0){
-                $update = DB::table('users')->where('id', $id)->update([
-                    'nik_tg' => $data['nik_tg'],
-                    'name' => $data['name'],
-                    'email' => $data['email'],
-                    'updated_by' => $nik_tg,
-                    'updated_at' => $datetime
-                ]);
-                if ($update){
-                    $activity = "Edit Admin ID ".$id." Successful";
-                    $status = 'SUCCESS';
-                    $message = 'success';
-                } else {
-                    $activity = "Edit Admin Failed";
-                    $status = 'ERROR';
-                    $message = 'error';
-                }
-                $route = 'manage_admin';
-            } else {
-                return redirect()->route('manage_admin')->with('error', 'Admin ID Not Found');
+        $nik_tg = $request->session()->get('user')->nik_tg;
+        $data['dashboard'] = DB::table('document_tracking as d')->select(
+                                                                DB::raw('COUNT(d.id) as count'),
+                                                                'd.region',
+                                                                'ms.status'
+                                                            )->where(function ($query) use ($nik_tg) {
+                                                                $query->where('pm_nik', '=' , $nik_tg)
+                                                                    ->orWhere('mgr_region_nik', '=', $nik_tg)
+                                                                    ->orWhere('gm_area_nik', '=', $nik_tg)
+                                                                    ->orWhere('mgr_cons_nik', '=', $nik_tg)
+                                                                    ->orWhere('gm_cons_nik', '=', $nik_tg)
+                                                                    ->orWhere('mgr_proc_nik', '=', $nik_tg)
+                                                                    ->orWhere('vp_proc_nik', '=', $nik_tg)
+                                                                    ->orWhere(DB::raw('935378 = '.$nik_tg), '=', 1)
+                                                                    ;
+                                                            })
+                                                            ->leftJoin('master_status as ms', 'ms.id', '=', 'd.id_status')
+                                                            ->orderBy('d.region', 'asc')
+                                                            ->groupBy('d.region', 'ms.status')
+                                                            ->get();
+        $data['all_status'] = DB::table('master_status')->select('*')->get();
+        $data['all_region'] = DB::table('document_tracking')->select(DB::raw('DISTINCT region as region'))->orderBy('region','asc')->get();
+        foreach($data['all_region'] as $r){
+            foreach($data['all_status'] as $s){
+                $data['count'][$r->region][$s->status] = 0;
             }
+        }
+        foreach($data['dashboard'] as $d){
+            $data['count'][$d->region][$d->status] = $d->count;
+        }
+        return view('dashboard', compact('data'));
+    }
+
+    public function list_document(Request $request){
+        if ($request->has('region')){
+            $data['q_region'] = $request->query('region');
+        }
+        if ($request->has('status')){
+            $data['q_status'] = $request->query('status');
+        }
+        $nik_tg = $request->session()->get('user')->nik_tg;
+        $data['document'] = DB::table('document_tracking as d')->select(
+                                                                'd.*',
+                                                                'ms.status',
+                                                                'ms.class'
+                                                            )->where(function ($query) use ($nik_tg) {
+                                                                $query->where('pm_nik', '=' , $nik_tg)
+                                                                    ->orWhere('mgr_region_nik', '=', $nik_tg)
+                                                                    ->orWhere('gm_area_nik', '=', $nik_tg)
+                                                                    ->orWhere('mgr_cons_nik', '=', $nik_tg)
+                                                                    ->orWhere('gm_cons_nik', '=', $nik_tg)
+                                                                    ->orWhere('mgr_proc_nik', '=', $nik_tg)
+                                                                    ->orWhere('vp_proc_nik', '=', $nik_tg)
+                                                                    ->orWhere(DB::raw('935378 = '.$nik_tg), '=', 1)
+                                                                    ;
+                                                            })
+                                                            ->leftJoin('master_status as ms', 'ms.id', '=', 'd.id_status')
+                                                            ->orderBy('d.id_status', 'asc')
+                                                            ->get();
+        $data['all_status'] = DB::table('master_status')->select('*')->get();
+        $data['all_region'] = DB::table('document_tracking')->select(DB::raw('DISTINCT region as region'))->orderBy('region','asc')->get();
+        return view('list_document', compact('data'));
+    }
+
+    public function detail_list_document (Request $request, $id){
+        $nik_tg = $request->session()->get('user')->nik_tg;
+        $data['document'] = DB::table('document_tracking as d')->select(
+                                                                'd.*',
+                                                                'ms.status',
+                                                                'ms.class'
+                                                            )->where(function ($query) use ($nik_tg) {
+                                                                $query->where('pm_nik', '=' , $nik_tg)
+                                                                    ->orWhere('mgr_region_nik', '=', $nik_tg)
+                                                                    ->orWhere('gm_area_nik', '=', $nik_tg)
+                                                                    ->orWhere('mgr_cons_nik', '=', $nik_tg)
+                                                                    ->orWhere('gm_cons_nik', '=', $nik_tg)
+                                                                    ->orWhere('mgr_proc_nik', '=', $nik_tg)
+                                                                    ->orWhere('vp_proc_nik', '=', $nik_tg)
+                                                                    ->orWhere(DB::raw('935378 = '.$nik_tg), '=', 1)
+                                                                    ;
+                                                            })->where('d.id', $id)
+                                                            ->leftJoin('master_status as ms', 'ms.id', '=', 'd.id_status')
+                                                            ->orderBy('d.id_status', 'asc')
+                                                            ->get();
+        if (count($data['document']) == 0){
+            return redirect()->route('dashboard')->with('error', 'Data dokumen tidak ditemukan, mohon cek kembali URL anda');
+        }
+        $data['document'] = $data['document']->first();
+        $doc = $data['document'];
+        if ($doc->vp_proc_date != null){
+            $data['latest_document'] = explode('|', $doc->vp_proc_doc);
+        } else if ($doc->mgr_proc_date != null){
+            $data['latest_document'] = explode('|', $doc->mgr_proc_doc);
+        } else if ($doc->gm_cons_date != null){
+            $data['latest_document'] = explode('|', $doc->gm_cons_doc);
+        } else if ($doc->mgr_cons_date != null){
+            $data['latest_document'] = explode('|', $doc->mgr_cons_doc);
+        } else if ($doc->gm_area_date != null){
+            $data['latest_document'] = explode('|', $doc->gm_area_doc);
+        } else if ($doc->mgr_region_date != null){
+            $data['latest_document'] = explode('|', $doc->mgr_region_doc);
+        } else if ($doc->pm_date != null){
+            $data['latest_document'] = explode('|', $doc->pm_doc);
         } else {
-            $insert = DB::table('users')->insertGetId([
-                'nik_tg' => $data['nik_tg'],
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => $password,
-                'created_by' => $nik_tg,
-                'created_at' => $datetime
+            $data['latest_document'] = [];
+        }
+        $data['privilege'] = 0;
+        if (($nik_tg = '935378') && ($doc->id_status != 8)){
+            $data['privilege'] = 1;
+            if ($doc->id_status == 1){
+                $data['latest_pic'] = 'PM';
+            } else if ($doc->id_status == 2){
+                $data['latest_pic'] = 'MGR Regional';
+            } else if ($doc->id_status == 3){
+                $data['latest_pic'] = 'GM Area';
+            } else if ($doc->id_status == 4){
+                $data['latest_pic'] = 'MGR Construction';
+            } else if ($doc->id_status == 5){
+                $data['latest_pic'] = 'GM Construction';
+            } else if ($doc->id_status == 6){
+                $data['latest_pic'] = 'MGR Procurement';
+            } else if ($doc->id_status == 7){
+                $data['latest_pic'] = 'VP Procurement';
+            }
+        }
+        if (($doc->id_status == 1) && ($doc->pm_nik == $nik_tg)){
+            $data['privilege'] = 1;
+            $data['latest_pic'] = 'PM';
+        }
+        if (($doc->id_status == 2) && ($doc->mgr_region_nik == $nik_tg)){
+            $data['privilege'] = 1;
+            $data['latest_pic'] = 'MGR Regional';
+        }
+        if (($doc->id_status == 3) && ($doc->gm_area_nik == $nik_tg)){
+            $data['privilege'] = 1;
+            $data['latest_pic'] = 'GM Area';
+        }
+        if (($doc->id_status == 4) && ($doc->mgr_cons_nik == $nik_tg)){
+            $data['privilege'] = 1;
+            $data['latest_pic'] = 'MGR Construction';
+        }
+        if (($doc->id_status == 5) && ($doc->gm_cons_nik == $nik_tg)){
+            $data['privilege'] = 1;
+            $data['latest_pic'] = 'GM Construction';
+        }
+        if (($doc->id_status == 6) && ($doc->mgr_proc_nik == $nik_tg)){
+            $data['privilege'] = 1;
+            $data['latest_pic'] = 'MGR Procurement';
+        }
+        if (($doc->id_status == 7) && ($doc->vp_proc_nik == $nik_tg)){
+            $data['privilege'] = 1;
+            $data['latest_pic'] = 'VP Procurement';
+        }
+        return view('detail_list_document', compact('data'));
+    }
+
+    public function submit_detail_list_document(Request $request, $id){
+        $nik_tg = $request->session()->get('user')->nik_tg;
+        if ($request->file()){
+            $check = DB::table('document_tracking')->where('id', $id)->select('*')->get();
+            if (count($check) == 0){
+                return redirect()->route('list_document')->with('error', 'ID Dokumen tidak ditemukan, mohon cek kembali URL anda');
+            }
+            $check = $check->first();
+            $files = $request->file('document');
+            $array_filename = [];
+            foreach($files as $key => $file){
+                $count = $check->id.rand(0,10000);
+                $fileName = $count.'_'.$file->getClientOriginalName();
+                $move = $file->move(public_path('storage'), $fileName);
+                if ($move){
+                    $array_filename[] = $fileName;
+                    $datetime = date('Y-m-d H:i:s');
+                    $activity = 'Success Upload Document File in Detail Document file '.$fileName;
+                    $status = 'SUCCESS';
+                    DB::table('log')->insert([
+                        'nik_tg' => $nik_tg,
+                        'activity' => $activity,
+                        'status' => $status,
+                        'datetime' => $datetime
+                    ]);
+                } else {
+                    $activity = 'Failed Upload Document File in Detail Document';
+                    $status = 'ERROR';
+                    $datetime = date('Y-m-d H:i:s');
+                    DB::table('log')->insert([
+                        'nik_tg' => $nik_tg,
+                        'activity' => $activity,
+                        'status' => $status,
+                        'datetime' => $datetime
+                    ]);
+                    return back()
+                    ->with('error', 'Gagal mengupload file dokumen. Mohon kontak admin IT.');
+                }
+            }
+            if ($check->id_status == 1){
+                $status = 2;
+                $column = 'pm_doc';
+                $column2 = 'pm_date';
+            } else if ($check->id_status == 2){
+                $status = 3;
+                $column = 'mgr_region_doc';
+                $column2 = 'mgr_region_date';
+            } else if ($check->id_status == 3){
+                $status = 4;
+                $column = 'gm_area_doc';
+                $column2 = 'gm_area_date';
+            } else if ($check->id_status == 4){
+                $status = 5;
+                $column = 'mgr_cons_doc';
+                $column2 = 'mgr_cons_date';
+            } else if ($check->id_status == 5){
+                $status = 6;
+                $column = 'gm_cons_doc';
+                $column2 = 'gm_cons_date';
+            } else if ($check->id_status == 6){
+                $status = 7;
+                $column = 'mgr_proc_doc';
+                $column2 = 'mgr_proc_date';
+            } else if ($check->id_status == 7){
+                $status = 8;
+                $column = 'vp_proc_doc';
+                $column2 = 'vp_proc_date';
+            } else {
+                $status = 1;
+                $column = 'temp_doc';
+                $column2 = 'temp_date';
+            }
+            $doc = implode('|', $array_filename);
+            $update = DB::table('document_tracking')->where('id', $id)
+                                                    ->update([
+                                                        'id_status' => $status,
+                                                        $column => $doc,
+                                                        $column2 => date('Y-m-d H:i:s')
+                                                    ]);
+            $activity = 'Success Update Progress Document ID '.$id;
+            $status = 'SUCCESS';
+            $datetime = date('Y-m-d H:i:s');
+            DB::table('log')->insert([
+                'nik_tg' => $nik_tg,
+                'activity' => $activity,
+                'status' => $status,
+                'datetime' => $datetime
             ]);
-            if ($insert){
-                $activity = "Add Admin ID ".$insert." Successful";
-                $status = 'SUCCESS';
-                $message = 'success';
-            } else {
-                $activity = "Add Admin Failed";
-                $status = 'ERROR';
-                $message = 'error';
-            }
-            $route = 'add_admin';
-        }
-        $log = DB::table('log')->insert([
-            'nik_tg' => $nik_tg,
-            'activity' => $activity,
-            'status' => $status,
-            'datetime' => $datetime
-        ]);
-        return redirect()->route($route)->with($message, $activity);
-    }
-
-    public function delete_admin (Request $request, $id = NULL)
-    {
-        $nik_tg = $request->session()->get('nik_tg');
-        $datetime = date('Y-m-d H:i:s');
-        if ($id != NULL){
-            if ($id == $request->session()->get('id')){
-                $activity = "Delete Admin Failed, Session Still in Use";
-                $status = "ERROR";
-                $message = "error";
-                $return = 0;
-            } else {
-                $delete = DB::table('users')->where('id', $id)->delete();
-                if ($delete){
-                    $activity = "Delete Admin ID ".$id." Success";
-                    $status = "SUCCESS";  
-                    $message = "success";
-                    $return = 1;  
-                } else {
-                    $activity = "Delete Admin Failed, ID ".$id." Not Found";
-                    $status = "ERROR";
-                    $message = "error";
-                    $return = 0;
-                }
-            }
+            return redirect()->route('detail_list_document', ['id' => $id])->with('success', 'Dokumen berhasil diupload!');
         } else {
-            $activity = "Delete Admin Failed, No ID Provided";
-            $status = "ERROR";
-            $message = "error";
-            $return = 0;
+            return redirect()->route('detail_list_document', ['id' => $id])->with('error', 'File upload tidak ditemukan, mohon cek kembali file anda');
         }
-        $log = DB::table('log')->insert([
-            'nik_tg' => $nik_tg,
-            'activity' => $activity,
-            'status' => $status,
-            'datetime' => $datetime
-        ]);
-        $request->session()->flash($message, $activity);
-        return $return;
-    }
-
-    public function manage_peserta (Request $request) 
-    {
-        $data['peserta'] = DB::table('peserta_radir')->orderBy('priority','ASC')->orderBy('priority_number','ASC')->get();
-        return view('admin.manage_peserta', compact('data'));
-    }
-
-    public function add_peserta (Request $request, $id = NULL)
-    {
-        if ($id != NULL){
-            $data['peserta'] = DB::table('peserta_radir')->where('id', $id)->select('*')->get();
-        } else {
-            $data = [];
-            return view('admin.add_peserta', compact('data'));
-        }
-        if (count($data['peserta']) == 0){
-            return redirect()->route('manage_peserta')->with('error', 'Peserta Radir with ID '.$id.' Not Found, Please Check Again Your URL');
-        } else {
-            $data['id'] = $id;
-            $data['peserta'] = $data['peserta']->first();
-            $group = explode(',',$data['peserta']->group);
-            if (count($group) >= 2){
-                $data['group_1'] = $group[0];
-                $data['group_2'] = $group[1];
-            } else {
-                $data['group_1'] = NULL;
-                $data['group_2'] = NULL;
-            }
-            return view('admin.add_peserta', compact('data'));
-        }
-    }
-
-    public function submit_peserta (Request $request, $id = NULL)
-    {
-        $nik_tg = $request->session()->get('nik_tg');
-        $datetime = date('Y-m-d H:i:s');
-        $data = $request->all();
-        $file = $request->file('photo');
-        if ($file){
-            $destination = \Config::get('values.upload_url');
-            $file_name = $data['nik_tg']."_".date('YmdHis').'.'.$file->getClientOriginalExtension();
-            $move = $file->move($destination,$file_name);
-        } else {
-            if ($data['replace']){
-                $move = 1;
-                $file_name = NULL;
-            } else {
-                $move = 1;
-                $file_name = $data['replace_name'];
-            }
-        }
-        $group = '';
-        if (isset($data['group_1'])){
-            $group = '1';
-        }
-        $group .= ',';
-        if (isset($data['group_2'])){
-            $group .= '2';
-        }
-        if (!isset($data['priority'])){
-            $data['priority'] = 0;
-        }
-        if (!isset($data['priority_number'])){
-            $data['priority_number'] = 0;
-        }
-        if ($move){
-            if ($id != NULL){
-                $check = DB::table('peserta_radir')->where('id', $id)->select('*')->get();
-                if (count($check) > 0){
-                    $update = DB::table('peserta_radir')->where('id', $id)->update([
-                        'nik_tg' => $data['nik_tg'],
-                        'name' => $data['name'],
-                        'unit' => $data['unit'],
-                        'direktorat' => $data['direktorat'],
-                        'jabatan' => $data['jabatan'],
-                        'priority' => $data['priority'],
-                        'priority_number' => $data['priority_number'],
-                        'photo' => $file_name,
-                        'group' => $group,
-                        'updated_by' => $nik_tg,
-                        'updated_at' => $datetime
-                    ]);
-                    if ($update){
-                        $activity = "Edit Peserta Radir ID ".$id." Successful";
-                        $status = 'SUCCESS';
-                        $message = 'success';
-                    } else {
-                        $activity = "Edit Peserta Radir Failed";
-                        $status = 'ERROR';
-                        $message = 'error';
-                    }
-                    $route = 'manage_peserta';
-                } else {
-                    return redirect()->route('manage_peserta')->with('error', 'Peserta ID Not Found');
-                }
-            } else {
-                $insert = DB::table('peserta_radir')->insertGetId([
-                    'nik_tg' => $data['nik_tg'],
-                    'name' => $data['name'],
-                    'unit' => $data['unit'],
-                    'direktorat' => $data['direktorat'],
-                    'jabatan' => $data['jabatan'],
-                    'priority' => $data['priority'],
-                    'priority_number' => $data['priority_number'],
-                    'photo' => $file_name,
-                    'group' => $group,
-                    'created_by' => $nik_tg,
-                    'created_at' => $datetime
-                ]);
-                if ($insert){
-                    $activity = "Add Peserta Radir ID ".$insert." Successful";
-                    $status = 'SUCCESS';
-                    $message = 'success';
-                } else {
-                    $activity = "Add Peserta Radir Failed";
-                    $status = 'ERROR';
-                    $message = 'error';
-                }
-                $route = 'add_peserta';
-            }
-        } else {
-            $activity = "Upload Error, Please Contact Team IT";
-            $status = 'ERROR';
-            $message = 'error';
-        }
-        $log = DB::table('log')->insert([
-            'nik_tg' => $nik_tg,
-            'activity' => $activity,
-            'status' => $status,
-            'datetime' => $datetime
-        ]);
-        return redirect()->route($route)->with($message, $activity);
-    }
-
-    public function delete_peserta (Request $request, $id = NULL)
-    {
-        $nik_tg = $request->session()->get('nik_tg');
-        $datetime = date('Y-m-d H:i:s');
-        if ($id != NULL){
-            $delete = DB::table('peserta_radir')->where('id', $id)->delete();
-            if ($delete){
-                $activity = "Delete Peserta Radir ID ".$id." Success";
-                $status = "SUCCESS";  
-                $message = "success";
-                $return = 1;  
-            } else {
-                $activity = "Delete Peserta Radir Failed, ID ".$id." Not Found";
-                $status = "ERROR";
-                $message = "error";
-                $return = 0;
-            }
-        } else {
-            $activity = "Delete Peserta Radir Failed, No ID Provided";
-            $status = "ERROR";
-            $message = "error";
-            $return = 0;
-        }
-        $log = DB::table('log')->insert([
-            'nik_tg' => $nik_tg,
-            'activity' => $activity,
-            'status' => $status,
-            'datetime' => $datetime
-        ]);
-        $request->session()->flash($message, $activity);
-        return $return;
-    }
-
-    public function manage_peserta_event (Request $request) 
-    {
-        $data['peserta_event'] = DB::table('peserta_event as pe')
-                                    ->leftJoin('event_list as el', 'el.id', '=', 'pe.event_id')
-                                    ->leftJoin('event_priority as ep', function($join)
-                                    {
-                                        $join->on('ep.event_id', '=', 'pe.event_id');
-                                        $join->on('ep.priority','=','pe.priority');
-                                    })
-                                    ->select(
-                                        'pe.*',
-                                        'el.event',
-                                        'ep.priority_name'
-                                    )
-                                    ->orderBy('priority','ASC')
-                                    ->orderBy('priority_number','ASC')->get();
-        return view('admin.manage_peserta_event', compact('data'));
-    }
-
-    public function add_peserta_event (Request $request, $id = NULL)
-    {
-        $event_id = 1;
-        $data['event'] = DB::table('event_list')->select('*')->get();
-        $data['event_priority'] = DB::table('event_priority')->where('event_id', $event_id)->select('*')->get();
-        if ($id != NULL){
-            $data['peserta_event'] = DB::table('peserta_event')->where('id', $id)->select('*')->get();
-        } else {
-            // $data = [];
-            return view('admin.add_peserta_event', compact('data'));
-        }
-        if (count($data['peserta_event']) == 0){
-            return redirect()->route('manage_peserta_event')->with('error', 'Peserta Event with ID '.$id.' Not Found, Please Check Again Your URL');
-        } else {
-            $data['id'] = $id;
-            $data['peserta_event'] = $data['peserta_event']->first();
-            return view('admin.add_peserta_event', compact('data'));
-        }
-    }
-
-    public function submit_peserta_event (Request $request, $id = NULL)
-    {
-        $nik_tg = $request->session()->get('nik_tg');
-        $datetime = date('Y-m-d H:i:s');
-        $data = $request->all();
-        $event_id = $data['event_id'];
-        $file = $request->file('photo');
-        if ($file){
-            $destination = \Config::get('values.upload_url');
-            $file_name = $data['nik_tg']."_".date('YmdHis').'.'.$file->getClientOriginalExtension();
-            $move = $file->move($destination,$file_name);
-        } else {
-            if ($data['replace']){
-                $move = 1;
-                $file_name = NULL;
-            } else {
-                $move = 1;
-                $file_name = $data['replace_name'];
-            }
-        }
-        $group = '';
-        if (isset($data['group_1'])){
-            $group = '1';
-        }
-        $group .= ',';
-        if (isset($data['group_2'])){
-            $group .= '2';
-        }
-        if (!isset($data['priority'])){
-            $data['priority'] = 0;
-        }
-        if (!isset($data['priority_number'])){
-            $data['priority_number'] = 0;
-        }
-        if ($move){
-            if ($id != NULL){
-                $check = DB::table('peserta_event')->where('id', $id)->select('*')->get();
-                if (count($check) > 0){
-                    $update = DB::table('peserta_event')->where('id', $id)->update([
-                        'event_id' => $event_id,
-                        'nik_tg' => $data['nik_tg'],
-                        'name' => $data['name'],
-                        'posisi' => $data['posisi'],
-                        'company' => $data['company'],
-                        'priority' => $data['priority'],
-                        'priority_number' => $data['priority_number'],
-                        'photo' => $file_name,
-                        'updated_by' => $nik_tg,
-                        'updated_at' => $datetime
-                    ]);
-                    if ($update){
-                        $activity = "Edit Peserta Event ID ".$id." Successful";
-                        $status = 'SUCCESS';
-                        $message = 'success';
-                    } else {
-                        $activity = "Edit Peserta Event Failed";
-                        $status = 'ERROR';
-                        $message = 'error';
-                    }
-                    $route = 'manage_peserta_event';
-                } else {
-                    return redirect()->route('manage_peserta_event')->with('error', 'Peserta ID Not Found');
-                }
-            } else {
-                $insert = DB::table('peserta_event')->insertGetId([
-                    'event_id' => $event_id,
-                    'nik_tg' => $data['nik_tg'],
-                    'name' => $data['name'],
-                    'posisi' => $data['posisi'],
-                    'company' => $data['company'],
-                    'priority' => $data['priority'],
-                    'priority_number' => $data['priority_number'],
-                    'photo' => $file_name,
-                    'created_by' => $nik_tg,
-                    'created_at' => $datetime
-                ]);
-                if ($insert){
-                    $activity = "Add Peserta Event ID ".$insert." Successful";
-                    $status = 'SUCCESS';
-                    $message = 'success';
-                } else {
-                    $activity = "Add Peserta Event Failed";
-                    $status = 'ERROR';
-                    $message = 'error';
-                }
-                $route = 'add_peserta_event';
-            }
-        } else {
-            $activity = "Upload Error, Please Contact Team IT";
-            $status = 'ERROR';
-            $message = 'error';
-        }
-        $log = DB::table('log')->insert([
-            'nik_tg' => $nik_tg,
-            'activity' => $activity,
-            'status' => $status,
-            'datetime' => $datetime
-        ]);
-        return redirect()->route($route)->with($message, $activity);
-    }
-
-    public function delete_peserta_event (Request $request, $id = NULL)
-    {
-        $nik_tg = $request->session()->get('nik_tg');
-        $datetime = date('Y-m-d H:i:s');
-        if ($id != NULL){
-            $delete = DB::table('peserta_event')->where('id', $id)->delete();
-            if ($delete){
-                $activity = "Delete Peserta Event ID ".$id." Success";
-                $status = "SUCCESS";  
-                $message = "success";
-                $return = 1;  
-            } else {
-                $activity = "Delete Peserta Event Failed, ID ".$id." Not Found";
-                $status = "ERROR";
-                $message = "error";
-                $return = 0;
-            }
-        } else {
-            $activity = "Delete Peserta Event Failed, No ID Provided";
-            $status = "ERROR";
-            $message = "error";
-            $return = 0;
-        }
-        $log = DB::table('log')->insert([
-            'nik_tg' => $nik_tg,
-            'activity' => $activity,
-            'status' => $status,
-            'datetime' => $datetime
-        ]);
-        $request->session()->flash($message, $activity);
-        return $return;
-    }
-
-    public function download_excel (Request $request){
-        $data['excel'] = DB::table('absen_radir')->select(DB::raw("DISTINCT( DATE(datetime)) as date_radir"))
-                                                ->orderBy('date_radir', 'DESC')
-                                        ->get();
-        return view('admin.download_excel', compact('data'));
-    }
-
-    public function download_excel_list (Request $request, $date){
-        $data['date'] = $date;
-        $data['absen'] = DB::table('absen_radir')->select('*')
-                                                ->where(DB::raw('DATE(datetime)'), $date)
-                                                ->get();
-        return view('api.download_excel_list', compact('data'));
-    }
-
-    public function reset_absen (Request $request){
-        $date = date('Y-m-d');
-        $nik_tg = $request->session()->get('nik_tg');
-        $activity = 'Reset Absen Tanggal '.$date.' Berhasil';
-        $status = 'SUCCESS';
-        $datetime = date('Y-m-d H:i:s');
-        $delete = DB::table('absen_radir')->where(DB::raw('DATE(datetime)'), $date)->delete();
-        $log = DB::table('log')->insert([
-            'nik_tg' => $nik_tg,
-            'activity' => $activity,
-            'status' => $status,
-            'datetime' => $datetime
-        ]);
-        $request->session()->flash('success', $activity);
-        return $delete;
-    }
-
-    public function reset_absen_event (Request $request, $id){
-        $date = date('Y-m-d');
-        $nik_tg = $request->session()->get('nik_tg');
-        $activity = 'Reset Absen Event '.$id.' Tanggal '.$date.' Berhasil';
-        $status = 'SUCCESS';
-        $datetime = date('Y-m-d H:i:s');
-        $delete = DB::table('absen_event')->where('event_id', $id)->where(DB::raw('DATE(datetime)'), $date)->delete();
-        $log = DB::table('log')->insert([
-            'nik_tg' => $nik_tg,
-            'activity' => $activity,
-            'status' => $status,
-            'datetime' => $datetime
-        ]);
-        $request->session()->flash('success', $activity);
-        return $delete;
     }
 }
