@@ -19,12 +19,17 @@ class MainController extends Controller
 
     public function dashboard(Request $request)
     {
+        $special = DB::table('master_special_privilege')->select('*')->get();
+        $special_nik = [];
+        foreach($special as $s){
+            $special_nik[] = $s->nik_tg;
+        }
         $nik_tg = $request->session()->get('user')->nik_tg;
         $data['dashboard'] = DB::table('document_tracking as d')->select(
                                                                 DB::raw('COUNT(d.id) as count'),
                                                                 'd.region',
                                                                 'ms.status'
-                                                            )->where(function ($query) use ($nik_tg) {
+                                                            )->where(function ($query) use ($nik_tg, $special_nik) {
                                                                 $query->where('pm_nik', '=' , $nik_tg)
                                                                     ->orWhere('mgr_region_nik', '=', $nik_tg)
                                                                     ->orWhere('gm_area_nik', '=', $nik_tg)
@@ -32,7 +37,7 @@ class MainController extends Controller
                                                                     ->orWhere('gm_cons_nik', '=', $nik_tg)
                                                                     ->orWhere('mgr_proc_nik', '=', $nik_tg)
                                                                     ->orWhere('vp_proc_nik', '=', $nik_tg)
-                                                                    ->orWhere(DB::raw('935378 = '.$nik_tg), '=', 1)
+                                                                    ->orWhereIn(DB::raw($nik_tg), $special_nik)
                                                                     ;
                                                             })
                                                             ->leftJoin('master_status as ms', 'ms.id', '=', 'd.id_status')
@@ -59,12 +64,17 @@ class MainController extends Controller
         if ($request->has('status')){
             $data['q_status'] = $request->query('status');
         }
+        $special = DB::table('master_special_privilege')->select('*')->get();
+        $special_nik = [];
+        foreach($special as $s){
+            $special_nik[] = $s->nik_tg;
+        }
         $nik_tg = $request->session()->get('user')->nik_tg;
         $data['document'] = DB::table('document_tracking as d')->select(
                                                                 'd.*',
                                                                 'ms.status',
                                                                 'ms.class'
-                                                            )->where(function ($query) use ($nik_tg) {
+                                                            )->where(function ($query) use ($nik_tg, $special_nik) {
                                                                 $query->where('pm_nik', '=' , $nik_tg)
                                                                     ->orWhere('mgr_region_nik', '=', $nik_tg)
                                                                     ->orWhere('gm_area_nik', '=', $nik_tg)
@@ -72,7 +82,7 @@ class MainController extends Controller
                                                                     ->orWhere('gm_cons_nik', '=', $nik_tg)
                                                                     ->orWhere('mgr_proc_nik', '=', $nik_tg)
                                                                     ->orWhere('vp_proc_nik', '=', $nik_tg)
-                                                                    ->orWhere(DB::raw('935378 = '.$nik_tg), '=', 1)
+                                                                    ->orWhereIn(DB::raw($nik_tg), $special_nik)
                                                                     ;
                                                             })
                                                             ->leftJoin('master_status as ms', 'ms.id', '=', 'd.id_status')
@@ -106,11 +116,16 @@ class MainController extends Controller
 
     public function detail_list_document (Request $request, $id){
         $nik_tg = $request->session()->get('user')->nik_tg;
+        $special = DB::table('master_special_privilege')->select('*')->get();
+        $special_nik = [];
+        foreach($special as $s){
+            $special_nik[] = $s->nik_tg;
+        }
         $data['document'] = DB::table('document_tracking as d')->select(
                                                                 'd.*',
                                                                 'ms.status',
                                                                 'ms.class'
-                                                            )->where(function ($query) use ($nik_tg) {
+                                                            )->where(function ($query) use ($nik_tg, $special_nik) {
                                                                 $query->where('pm_nik', '=' , $nik_tg)
                                                                     ->orWhere('mgr_region_nik', '=', $nik_tg)
                                                                     ->orWhere('gm_area_nik', '=', $nik_tg)
@@ -118,7 +133,7 @@ class MainController extends Controller
                                                                     ->orWhere('gm_cons_nik', '=', $nik_tg)
                                                                     ->orWhere('mgr_proc_nik', '=', $nik_tg)
                                                                     ->orWhere('vp_proc_nik', '=', $nik_tg)
-                                                                    ->orWhere(DB::raw('935378 = '.$nik_tg), '=', 1)
+                                                                    ->orWhereIn(DB::raw($nik_tg), $special_nik)
                                                                     ;
                                                             })->where('d.id', $id)
                                                             ->leftJoin('master_status as ms', 'ms.id', '=', 'd.id_status')
@@ -167,25 +182,25 @@ class MainController extends Controller
         }
         $data['privilege'] = 0;
         $data['privilege_proc'] = 0;
-        if (($nik_tg == '935378') && ($doc->id_status != 8)){
-            $data['privilege'] = 1;
-            if ($doc->id_status == 1){
-                $data['latest_pic'] = 'PM';
-            } else if ($doc->id_status == 2){
-                $data['latest_pic'] = 'MGR Regional';
-            } else if ($doc->id_status == 3){
-                $data['latest_pic'] = 'GM Area';
-            } else if ($doc->id_status == 4){
-                $data['latest_pic'] = 'MGR Construction';
-            } else if ($doc->id_status == 5){
-                $data['latest_pic'] = 'GM Construction';
-            } else if ($doc->id_status == 6){
-                $data['latest_pic'] = 'MGR Procurement';
-                $data['privilege_proc'] = 1;
-            } else if ($doc->id_status == 7){
-                $data['latest_pic'] = 'VP Procurement';
-            }
-        }
+        // if (($nik_tg == '935378') && ($doc->id_status != 8)){
+        //     $data['privilege'] = 1;
+        //     if ($doc->id_status == 1){
+        //         $data['latest_pic'] = 'PM';
+        //     } else if ($doc->id_status == 2){
+        //         $data['latest_pic'] = 'MGR Regional';
+        //     } else if ($doc->id_status == 3){
+        //         $data['latest_pic'] = 'GM Area';
+        //     } else if ($doc->id_status == 4){
+        //         $data['latest_pic'] = 'MGR Construction';
+        //     } else if ($doc->id_status == 5){
+        //         $data['latest_pic'] = 'GM Construction';
+        //     } else if ($doc->id_status == 6){
+        //         $data['latest_pic'] = 'MGR Procurement';
+        //         $data['privilege_proc'] = 1;
+        //     } else if ($doc->id_status == 7){
+        //         $data['latest_pic'] = 'VP Procurement';
+        //     }
+        // }
         if (($doc->id_status == 1) && ($doc->pm_nik == $nik_tg)){
             $data['privilege'] = 1;
             $data['latest_pic'] = 'PM';
@@ -215,7 +230,7 @@ class MainController extends Controller
             $data['privilege'] = 1;
             $data['latest_pic'] = 'VP Procurement';
         }
-        $pm = ['745491', '785582', '785789', '785886', '806040', '825809', '825811', '826188', '865672', '877258', '936442', '935378'];
+        $pm = ['745491', '785582', '785789', '785886', '806040', '825809', '825811', '826188', '865672', '877258', '936442'];
         if (in_array($nik_tg, $pm)){
             $data['new_doc'] = 1;
         } else {
