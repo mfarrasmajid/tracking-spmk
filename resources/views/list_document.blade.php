@@ -186,7 +186,7 @@
                     <td>{{$d->site_name}}</td>
                     <td>{{$d->region}}</td>
                     <td>{{$d->scope}}</td>
-                    <td>{{$d->amount}}</td>
+                    <td>@php echo number_format($d->amount, 0, ',','.'); @endphp</td>
                     <td>{{$d->supplier_name}}</td>
                     <td>{{$d->spmk}}</td>
                     @php 
