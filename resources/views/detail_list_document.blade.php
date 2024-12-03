@@ -269,6 +269,25 @@
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->vp_proc_nik}}</div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->vp_proc_posisi}}</div>
                         </div>
+                        <div class="mb-2 border border-gray-600 rounded p-5">
+                            <div class="fs-6 fw-bolder d-flex flex-row justify-content-between align-items-center">
+                                Officer Procurement Status
+                                @if ($data['document']->off_proc_date != null)
+                                <div class="d-flex flex-column align-items-end">
+                                    <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
+                                    <div class="fs-7">{{ date('d M Y H:i:s', strtotime($data['document']->off_proc_date)) }}</div>
+                                </div>
+                                @else
+                                <div class="d-flex flex-column align-items-end">
+                                    <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
+                                    <div class="fs-7">NY Approved</div>
+                                </div>
+                                @endif
+                            </div>
+                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->off_proc_name}}</div>
+                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->off_proc_nik}}</div>
+                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->off_proc_posisi}}</div>
+                        </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="mb-2">

@@ -37,6 +37,7 @@ class MainController extends Controller
                                                                     ->orWhere('gm_cons_nik', '=', $nik_tg)
                                                                     ->orWhere('mgr_proc_nik', '=', $nik_tg)
                                                                     ->orWhere('vp_proc_nik', '=', $nik_tg)
+                                                                    ->orWhere('off_proc_nik', '=', $nik_tg)
                                                                     ->orWhereIn(DB::raw($nik_tg), $special_nik)
                                                                     ;
                                                             })
@@ -82,6 +83,7 @@ class MainController extends Controller
                                                                     ->orWhere('gm_cons_nik', '=', $nik_tg)
                                                                     ->orWhere('mgr_proc_nik', '=', $nik_tg)
                                                                     ->orWhere('vp_proc_nik', '=', $nik_tg)
+                                                                    ->orWhere('off_proc_nik', '=', $nik_tg)
                                                                     ->orWhereIn(DB::raw($nik_tg), $special_nik)
                                                                     ;
                                                             })
@@ -89,7 +91,9 @@ class MainController extends Controller
                                                             ->orderBy('d.id_status', 'asc')
                                                             ->get();
         foreach($data['document'] as $key => $d){
-            if ($d->vp_proc_date != null){
+            if ($d->off_proc_date != null){
+                $data['document'][$key]->last_date = $d->off_proc_date;
+            } else if ($d->vp_proc_date != null){
                 $data['document'][$key]->last_date = $d->vp_proc_date;
             } else if ($d->mgr_proc_date != null){
                 $data['document'][$key]->last_date = $d->mgr_proc_date;
@@ -133,6 +137,7 @@ class MainController extends Controller
                                                                     ->orWhere('gm_cons_nik', '=', $nik_tg)
                                                                     ->orWhere('mgr_proc_nik', '=', $nik_tg)
                                                                     ->orWhere('vp_proc_nik', '=', $nik_tg)
+                                                                    ->orWhere('off_proc_nik', '=', $nik_tg)
                                                                     ->orWhereIn(DB::raw($nik_tg), $special_nik)
                                                                     ;
                                                             })->where('d.id', $id)
@@ -144,7 +149,9 @@ class MainController extends Controller
         }
         $data['document'] = $data['document']->first();
         $d = $data['document'];
-        if ($d->vp_proc_date != null){
+        if ($d->off_proc_date != null){
+            $data['document']->last_date = $d->off_proc_date;
+        } elseif ($d->vp_proc_date != null){
             $data['document']->last_date = $d->vp_proc_date;
         } else if ($d->mgr_proc_date != null){
             $data['document']->last_date = $d->mgr_proc_date;
@@ -163,7 +170,9 @@ class MainController extends Controller
         }
         $data['aging'] = floor((strtotime(now()) - strtotime($data['document']->last_date)) / 86400);
         $doc = $data['document'];
-        if ($doc->vp_proc_date != null){
+        if ($doc->off_proc_date != null){
+            $data['latest_document'] = explode('|', $doc->off_proc_doc);
+        } else if ($doc->vp_proc_date != null){
             $data['latest_document'] = explode('|', $doc->vp_proc_doc);
         } else if ($doc->mgr_proc_date != null){
             $data['latest_document'] = explode('|', $doc->mgr_proc_doc);
@@ -229,6 +238,10 @@ class MainController extends Controller
         if (($doc->id_status == 7) && ($doc->vp_proc_nik == $nik_tg)){
             $data['privilege'] = 1;
             $data['latest_pic'] = 'VP Procurement';
+        }
+        if (($doc->id_status == 8) && ($doc->off_proc_nik == $nik_tg)){
+            $data['privilege'] = 1;
+            $data['latest_pic'] = 'Officer Procurement';
         }
         $pm = ['745491', '785582', '785789', '785886', '806040', '825809', '825811', '826188', '865672', '877258', '936442'];
         if (in_array($nik_tg, $pm)){
@@ -312,6 +325,10 @@ class MainController extends Controller
                 $status = 8;
                 $column = 'vp_proc_doc';
                 $column2 = 'vp_proc_date';
+            } else if ($check->id_status == 8){
+                $status = 9;
+                $column = 'off_proc_doc';
+                $column2 = 'off_proc_date';
             } else {
                 $status = 1;
                 $column = 'temp_doc';
@@ -390,6 +407,9 @@ class MainController extends Controller
                                                     'vp_proc_nik' => $check->vp_proc_nik,
                                                     'vp_proc_name' => $check->vp_proc_name,
                                                     'vp_proc_posisi' => $check->vp_proc_posisi,
+                                                    'off_proc_nik' => $check->off_proc_nik,
+                                                    'off_proc_name' => $check->off_proc_name,
+                                                    'off_proc_posisi' => $check->off_proc_posisi,
                                                     'id_status' => 1
         ]);
         $activity = 'Success New Doc PID '.$check->pid;
