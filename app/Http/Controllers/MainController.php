@@ -170,21 +170,21 @@ class MainController extends Controller
         }
         $data['aging'] = floor((strtotime(now()) - strtotime($data['document']->last_date)) / 86400);
         $doc = $data['document'];
-        if ($doc->off_proc_date != null){
+        if ($doc->off_proc_doc != null){
             $data['latest_document'] = explode('|', $doc->off_proc_doc);
-        } else if ($doc->vp_proc_date != null){
+        } else if ($doc->vp_proc_doc != null){
             $data['latest_document'] = explode('|', $doc->vp_proc_doc);
-        } else if ($doc->mgr_proc_date != null){
+        } else if ($doc->mgr_proc_doc != null){
             $data['latest_document'] = explode('|', $doc->mgr_proc_doc);
-        } else if ($doc->gm_cons_date != null){
+        } else if ($doc->gm_cons_doc != null){
             $data['latest_document'] = explode('|', $doc->gm_cons_doc);
-        } else if ($doc->mgr_cons_date != null){
+        } else if ($doc->mgr_cons_doc != null){
             $data['latest_document'] = explode('|', $doc->mgr_cons_doc);
-        } else if ($doc->gm_area_date != null){
+        } else if ($doc->gm_area_doc != null){
             $data['latest_document'] = explode('|', $doc->gm_area_doc);
-        } else if ($doc->mgr_region_date != null){
+        } else if ($doc->mgr_region_doc != null){
             $data['latest_document'] = explode('|', $doc->mgr_region_doc);
-        } else if ($doc->pm_date != null){
+        } else if ($doc->pm_doc != null){
             $data['latest_document'] = explode('|', $doc->pm_doc);
         } else {
             $data['latest_document'] = [];
@@ -254,12 +254,12 @@ class MainController extends Controller
 
     public function submit_detail_list_document(Request $request, $id){
         $nik_tg = $request->session()->get('user')->nik_tg;
+        $check = DB::table('document_tracking')->where('id', $id)->select('*')->get();
+        if (count($check) == 0){
+            return redirect()->route('list_document')->with('error', 'ID Dokumen tidak ditemukan, mohon cek kembali URL anda');
+        }
+        $check = $check->first();
         if ($request->file()){
-            $check = DB::table('document_tracking')->where('id', $id)->select('*')->get();
-            if (count($check) == 0){
-                return redirect()->route('list_document')->with('error', 'ID Dokumen tidak ditemukan, mohon cek kembali URL anda');
-            }
-            $check = $check->first();
             $files = $request->file('document');
             $array_filename = [];
             foreach($files as $key => $file){
@@ -363,7 +363,27 @@ class MainController extends Controller
             ]);
             return redirect()->route('detail_list_document', ['id' => $id])->with('success', 'Dokumen berhasil diupload!');
         } else {
-            return redirect()->route('detail_list_document', ['id' => $id])->with('error', 'File upload tidak ditemukan, mohon cek kembali file anda');
+            if ($check->id_status == 8){
+                $status = 9;
+                $column2 = 'off_proc_date';
+                $update = DB::table('document_tracking')->where('id', $id)
+                                                        ->update([
+                                                            'id_status' => $status,
+                                                            $column2 => date('Y-m-d H:i:s')
+                                                        ]);
+                $activity = 'Success Update Progress Document ID '.$id;
+                $status = 'SUCCESS';
+                $datetime = date('Y-m-d H:i:s');
+                DB::table('log')->insert([
+                    'nik_tg' => $nik_tg,
+                    'activity' => $activity,
+                    'status' => $status,
+                    'datetime' => $datetime
+                ]);
+                return redirect()->route('detail_list_document', ['id' => $id])->with('success', 'Status berhasil diupdate!');                                        
+            } else {
+                return redirect()->route('detail_list_document', ['id' => $id])->with('error', 'File upload tidak ditemukan, mohon cek kembali file anda');
+            }
         }
     }
 

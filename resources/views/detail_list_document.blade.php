@@ -303,6 +303,7 @@
                             <form action="{{url('/dashboard/list_document')}}/{{$data['document']->id}}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="fs-1 fw-bolder mb-5">Update Progress as {{$data['latest_pic']}}:</div>
+                                @if ($data['document']->id_status != 8)
                                 <div class="fv-row fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
                                     <!--begin::Label-->
                                     <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
@@ -315,6 +316,7 @@
                                     <!--end::Input-->
                                     <div class="fv-plugins-message-container invalid-feedback"></div>
                                 </div>
+                                @endif
                                 @if ($data['privilege_proc'])
                                 <div class="fv-row fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
                                     <!--begin::Label-->
@@ -329,7 +331,11 @@
                                     <div class="fv-plugins-message-container invalid-feedback"></div>
                                 </div>
                                 @endif
+                                @if ($data['document']->id_status != 8)
                                 <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                                @else
+                                <button type="submit" class="btn btn-primary btn-sm">Set as PO Done</button>
+                                @endif
                             </form>
                         </div>
                     </div>
