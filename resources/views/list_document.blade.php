@@ -313,13 +313,13 @@
         @endif
 
         $('select[name="status"]').on('change', function(){
-          datatable.columns(9).search(this.value).draw();   
+          datatable.columns(10).search(this.value).draw();   
             $($.fn.dataTable.tables(true)).DataTable()
         .columns.adjust();
         });
 
         @if (isset($data['q_status']))
-            datatable.columns(9).search("{{$data['q_status']}}").draw();   
+            datatable.columns(10).search("{{$data['q_status']}}").draw();   
         @endif
 	};
 
