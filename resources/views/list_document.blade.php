@@ -173,7 +173,8 @@
                     <th>Amount</th>
                     <th>Supplier Name</th>
                     <th>SPMK</th>
-                    <th>Aging Last Update</th>
+                    <th>Aging</th>
+                    <th>Amount Procurement</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -193,6 +194,7 @@
                         $aging = floor((strtotime(now()) - strtotime($d->last_date)) / 86400);
                     @endphp
                     <td>{{$aging}} hari</td>
+                    <td>@php echo number_format($d->amount_proc, 0, ',','.'); @endphp</td>
                     <td><span class="badge badge-sm badge-{{$d->class}}">{{$d->status}}</span></td>
                     <td>{{$d->id}}</td>
                 </tr>
@@ -209,6 +211,7 @@
                     <th>Supplier Name</th>
                     <th>SPMK</th>
                     <th>Aging</th>
+                    <th>Amount Procurement</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
