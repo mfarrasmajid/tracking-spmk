@@ -26,6 +26,12 @@ class RefreshSession
                 $request->session()->put('nik_tg', $u->nik_tg);
                 $request->session()->put('name', $u->name);
                 $request->session()->put('email', $u->email);
+                $special = DB::table('master_special_privilege')->where('nik_tg', $u->nik_tg)->select('*')->get();
+                if (count($special) > 0){
+                    $request->session()->put('special', 1);
+                } else {
+                    $request->session()->put('special', 0);
+                }
             } else {
                 $request->session()->flush();
                 return redirect('login');

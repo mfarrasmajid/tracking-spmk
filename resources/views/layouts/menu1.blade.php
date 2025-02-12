@@ -13,5 +13,10 @@
         <li class="nav-item">
             <a class="nav-link @if (count($path_current) >= 2) @if ($path_current[1] == 'dashboard') active @endif @endif" data-bs-toggle="tab" href="#kt_header_navs_tab_1">Dashboard</a>
         </li>
+        @if (session()->get('special'))
+        <li class="nav-item">
+            <a class="nav-link @if (count($path_current) >= 2) @if ($path_current[1] == 'admin') active @endif @endif" data-bs-toggle="tab" href="#kt_header_navs_tab_2">Admin</a>
+        </li>
+        @endif
     </ul>
 </div>

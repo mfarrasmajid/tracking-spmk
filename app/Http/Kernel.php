@@ -65,5 +65,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'ceksession' => \App\Http\Middleware\CekSession::class,
         'refreshsession' => \App\Http\Middleware\RefreshSession::class,
+        'cekadmin' => \App\Http\Middleware\CekAdmin::class,
     ];
 }

@@ -91,7 +91,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="row">
-                    <div class="col-lg-4">
+                    <div class="col-lg-3">
                         <div class="mb-5">
                             <div class="fs-5 fw-bolder text-muted mb-2">PID</div>
                             <div class="fs-6 ">{{$data['document']->pid}}</div>
@@ -113,7 +113,7 @@
                             <div class="fs-6 "><span class="badge badge-sm badge-{{$data['document']->class}}">{{$data['document']->status}}</span></div>
                         </div>
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-3">
                         <div class="mb-5">
                             <div class="fs-5 fw-bolder text-muted mb-2">Scope of Work</div>
                             <div class="fs-6 ">{{$data['document']->scope}}</div>
@@ -135,7 +135,7 @@
                             <div class="fs-6 ">@php echo number_format($data['document']->amount_proc, 0,',','.')@endphp</div>
                         </div>
                     </div>
-                    <div class="col-lg-4 mb-10">
+                    <div class="col-lg-3 mb-10">
                         <div class="mb-2 border border-gray-600 rounded p-5">
                             <div class="fs-6 fw-bolder d-flex flex-row justify-content-between align-items-center">
                                 PM Status
@@ -289,6 +289,62 @@
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->off_proc_posisi}}</div>
                         </div>
                     </div>
+                    <div class="col-lg-3 mb-10">
+                        <h2 class="d-block fs-2 fw-bolder mb-10">Komentar</h2>
+                        <!--begin::Timeline-->
+                        <div class="timeline" style="max-height: 1100px; overflow-y:scroll;">
+                            @foreach($data['komentar'] as $komentar)
+                            <!--begin::Timeline item-->
+                            <div class="timeline-item">
+                                <!--begin::Timeline line-->
+                                <div class="timeline-line w-40px"></div>
+                                <!--end::Timeline line-->
+                                <!--begin::Timeline icon-->
+                                <div class="timeline-icon symbol symbol-circle symbol-40px me-4">
+                                    @php
+                                    if ($komentar->approval_status == 'APPROVED'){
+                                        $class = 'success';
+                                    } else {
+                                        $class = 'danger';
+                                    }
+                                    @endphp
+                                    <div class="symbol-label bg-light-{{$class}}">
+                                        <!--begin::Svg Icon | path: icons/duotune/communication/com003.svg-->
+                                        <span class="svg-icon svg-icon-2 svg-icon-{{$class}}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                <path opacity="0.3" d="M2 4V16C2 16.6 2.4 17 3 17H13L16.6 20.6C17.1 21.1 18 20.8 18 20V17H21C21.6 17 22 16.6 22 16V4C22 3.4 21.6 3 21 3H3C2.4 3 2 3.4 2 4Z" fill="currentColor" />
+                                                <path d="M18 9H6C5.4 9 5 8.6 5 8C5 7.4 5.4 7 6 7H18C18.6 7 19 7.4 19 8C19 8.6 18.6 9 18 9ZM16 12C16 11.4 15.6 11 15 11H6C5.4 11 5 11.4 5 12C5 12.6 5.4 13 6 13H15C15.6 13 16 12.6 16 12Z" fill="currentColor" />
+                                            </svg>
+                                        </span>
+                                        <!--end::Svg Icon-->
+                                    </div>
+                                </div>
+                                <!--end::Timeline icon-->
+                                <!--begin::Timeline content-->
+                                <div class="timeline-content mb-3 mt-n1">
+                                    <!--begin::Timeline heading-->
+                                    <div class="pe-3 mb-5">
+                                        <div class="fs-6 fw-bolder text-muted mb-1">{{$komentar->activity}}</div>
+                                        <!--begin::Title-->
+                                        <div class="fs-5 fw-bold mb-2">{{$komentar->komentar}}</div>
+                                        <!--end::Title-->
+                                        <!--begin::Description-->
+                                        <div class="d-flex align-items-center mt-1 fs-6">
+                                            <!--begin::Info-->
+                                            <div class="text-muted me-2 fs-7"> {{$komentar->datetime}} oleh {{$komentar->nik_tg}} - {{$komentar->name}}</div>
+                                            <!--end::Info-->
+                                        </div>
+                                        <!--end::Description-->
+                                    </div>
+                                    <!--end::Timeline heading-->
+                                </div>
+                                <!--end::Timeline content-->
+                            </div>
+                            <!--end::Timeline item-->
+                            @endforeach
+                        </div>
+                    <!--end::Timeline-->
+                    </div>
                     <div class="col-lg-6">
                         <div class="mb-2">
                             <div class="fs-5 fw-bolder">Get Latest Document:</div>
@@ -300,10 +356,10 @@
                     @if ($data['privilege'])
                     <div class="col-lg-6">
                         <div class="mb-5">
-                            <form action="{{url('/dashboard/list_document')}}/{{$data['document']->id}}" method="POST" enctype="multipart/form-data">
+                            <form action="{{url('/dashboard/list_document')}}/{{$data['document']->id}}" method="POST" enctype="multipart/form-data" class="form">
                                 @csrf
                                 <div class="fs-1 fw-bolder mb-5">Update Progress as {{$data['latest_pic']}}:</div>
-                                @if ($data['document']->id_status != 8)
+                                @if (($data['document']->id_status == 1) || ($data['document']->id_status == 11) || ($data['document']->id_status == 6))
                                 <div class="fv-row fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
                                     <!--begin::Label-->
                                     <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
@@ -317,11 +373,42 @@
                                     <div class="fv-plugins-message-container invalid-feedback"></div>
                                 </div>
                                 @endif
-                                @if ($data['privilege_proc'])
+                                @if (($data['document']->id_status == 1) || ($data['document']->id_status == 11))
                                 <div class="fv-row fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
                                     <!--begin::Label-->
                                     <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
-                                        <span class="required">Amount by Procurement</span>
+                                        <span class="required">Input Nilai Negosiasi Awal</span>
+                                        <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Amount Procurement"></i>
+                                    </label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <input type="text" name="amount_awal" class="form-control form-control-solid number" required>
+                                    <!--end::Input-->
+                                    <div class="fv-plugins-message-container invalid-feedback"></div>
+                                </div>
+                                <div class="fv-row fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
+                                    <!--begin::Label-->
+                                    <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
+                                        <span class="required">Pilih SOW</span>
+                                        <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Pilih SOW"></i>
+                                    </label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <select name="id_sow" class="form-select form-select-solid" data-control="select2" required data-placeholder="Pilih SOW">
+                                        <option></option>
+                                        @foreach($data['sow'] as $s)
+                                        <option value="{{$s->id}}">{{$s->sow}}</option>
+                                        @endforeach
+                                    </select>
+                                    <!--end::Input-->
+                                    <div class="fv-plugins-message-container invalid-feedback"></div>
+                                </div>
+                                @endif
+                                @if ($data['document']->id_status == 6)
+                                <div class="fv-row fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
+                                    <!--begin::Label-->
+                                    <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
+                                        <span class="required">Input Nilai Negosiasi</span>
                                         <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Amount Procurement"></i>
                                     </label>
                                     <!--end::Label-->
@@ -331,7 +418,23 @@
                                     <div class="fv-plugins-message-container invalid-feedback"></div>
                                 </div>
                                 @endif
-                                @if ($data['document']->id_status != 8)
+                                <div class="fv-row fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
+                                    <!--begin::Label-->
+                                    <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
+                                        <span class="required">Komentar</span>
+                                        <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Komentar Approval"></i>
+                                    </label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <textarea name="komentar" class="form-control komentar" cols="100" rows="3" minlength="5" required></textarea>
+                                    <!--end::Input-->
+                                    <div class="fv-plugins-message-container invalid-feedback"></div>
+                                </div>
+                                <input type="hidden" name="approve_or_return" class="approve_or_return" value="1">
+                                @if (($data['document']->id_status != 1) && ($data['document']->id_status != 11))
+                                <button type="submit" class="btn btn-danger btn-return btn-sm me-5">Return</button>
+                                @endif
+                                @if ($data['document']->id_status != 10)
                                 <button type="submit" class="btn btn-primary btn-sm">Submit</button>
                                 @else
                                 <button type="submit" class="btn btn-primary btn-sm">Set as PO Done</button>
@@ -368,6 +471,33 @@
 <script>
     $(document).ready(function () {     
         $('input.number').number(true, 0, ',', '.');
+        $('.btn-return').on('click', function(){
+            $.confirm({
+                title: 'Konfirmasi Return All BoQ',
+                content: 'Apakah anda yakin akan mereturn BoQ ini?',
+                type: 'red',
+                typeAnimated: true,
+                buttons: {
+                    ya: {
+                        text: 'Submit',
+                        btnClass: 'btn-red',
+                        action: function(){
+                            var val = $('.komentar').val();
+                            if (val == ''){
+                                $.alert('Mohon isi komentar terlebih dahulu');
+                            } else if (val.length < 5){
+                                $.alert('Mohon isi komentar lebih dari 5 karakter');
+                            } else {
+                                $('.approve_or_return').val('0');
+                                $('.form').submit();
+                            }
+                        }
+                    },
+                    cancel: function () {
+                    }
+                }
+            });
+        })
     })
 </script>
 @stop 

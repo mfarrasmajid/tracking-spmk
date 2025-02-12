@@ -27,7 +27,20 @@
                     </div>
                     <!--end::Wrapper-->
                 </div>
+                @if (session()->get('special'))
+                <div class="tab-pane fade @if (count($path_current) >= 2) @if ($path_current[1] == 'admin') active show @endif @endif" id="kt_header_navs_tab_2">
+                    <!--begin::Wrapper-->
+                    <div class="d-flex flex-column flex-lg-row flex-lg-stack flex-wrap gap-2 px-4 px-lg-0">
+                        <div class="d-flex flex-column flex-lg-row gap-2">
+                            <a class="btn btn-sm btn-light-danger fw-bolder" href="{{ url('/admin/manage_users') }}">Manage User Admin</a>
+                            <a class="btn btn-sm btn-light-danger fw-bolder" href="{{ url('/admin/manage_sow') }}">Manage SOW</a>
+                            <a class="btn btn-sm btn-light-danger fw-bolder" href="{{ url('/admin/upload_spmk') }}">Upload SPMK</a>
+                        </div>
+                    </div>
+                    <!--end::Wrapper-->
+                </div>
                 <!--end::Tab panel-->
+                @endif
             </div>
             <!--end::Header tab content-->
         </div>
