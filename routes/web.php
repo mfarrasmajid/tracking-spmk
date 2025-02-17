@@ -23,6 +23,7 @@ Route::prefix('dashboard')->group(function() {
     Route::get('/list_document', 'MainController@list_document')->name('list_document');
     Route::get('/list_document/{id}', 'MainController@detail_list_document')->name('detail_list_document');
     Route::post('/list_document/{id}', 'MainController@submit_detail_list_document')->name('submit_detail_list_document');
+    Route::get('/print_document/{id}', 'MainController@print_document')->name('print_document');
     Route::post('/new_doc/{id}', 'MainController@new_doc')->name('new_doc');
 });
 Route::prefix('admin')->group(function () {
@@ -36,6 +37,7 @@ Route::prefix('admin')->group(function () {
     Route::post('/delete_sow/{id}', 'AdminController@delete_sow');
     Route::get('/upload_spmk', 'AdminController@upload_spmk')->name('upload_spmk');
     Route::post('/upload_spmk', 'AdminController@submit_upload_spmk');
+    Route::post('/deactivate_pid/{id}', 'AdminController@deactivate_pid');
     Route::prefix('api')->group(function () {
         Route::get('/get_list_manage_users', 'AdminController@get_list_manage_users');
         Route::get('/get_list_manage_sow', 'AdminController@get_list_manage_sow');

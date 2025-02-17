@@ -46,7 +46,7 @@ class MainController extends Controller
                                                             ->orderBy('d.region', 'asc')
                                                             ->groupBy('d.region', 'ms.status')
                                                             ->get();
-        $data['all_status'] = DB::table('master_status')->select('*')->get();
+        $data['all_status'] = DB::table('master_status')->select('*')->where('id', '!=', 12)->get();
         $data['all_region'] = DB::table('master_area')->select('*')->orderBy('id','asc')->get();
         foreach($data['all_region'] as $r){
             foreach($data['all_status'] as $s){
@@ -132,7 +132,17 @@ class MainController extends Controller
         $data['document'] = DB::table('document_tracking as d')->select(
                                                                 'd.*',
                                                                 'ms.status',
-                                                                'ms.class'
+                                                                'ms.class',
+                                                                'u1.name as pm_name1', 'u1.short_posisi as pm_posisi1',
+                                                                'u2.name as mgr_region_name1', 'u2.short_posisi as mgr_region_posisi1',
+                                                                'u3.name as gm_area_name1', 'u3.short_posisi as gm_area_posisi1',
+                                                                'u4.name as mgr_cons_name1', 'u4.short_posisi as mgr_cons_posisi1',
+                                                                'u5.name as gm_cons_name1', 'u5.short_posisi as gm_cons_posisi1',
+                                                                'u6.name as mgr_proc_name1', 'u6.short_posisi as mgr_proc_posisi1',
+                                                                'u7.name as vp_proc_name1', 'u7.short_posisi as vp_proc_posisi1',
+                                                                'u8.name as se_name1', 'u8.short_posisi as se_posisi1',
+                                                                'u9.name as off_proc_name1', 'u9.short_posisi as off_proc_posisi1',
+                                                                'msw.sow'
                                                             )->where(function ($query) use ($nik_tg, $special_nik) {
                                                                 $query->where('pm_nik', '=' , $nik_tg)
                                                                     ->orWhere('mgr_region_nik', '=', $nik_tg)
@@ -147,6 +157,16 @@ class MainController extends Controller
                                                                     ;
                                                             })->where('d.id', $id)
                                                             ->leftJoin('master_status as ms', 'ms.id', '=', 'd.id_status')
+                                                            ->leftJoin('hcm.users as u1', 'u1.nik_tg', '=', 'd.pm_nik')
+                                                            ->leftJoin('hcm.users as u2', 'u2.nik_tg', '=', 'd.mgr_region_nik')
+                                                            ->leftJoin('hcm.users as u3', 'u3.nik_tg', '=', 'd.gm_area_nik')
+                                                            ->leftJoin('hcm.users as u4', 'u4.nik_tg', '=', 'd.mgr_cons_nik')
+                                                            ->leftJoin('hcm.users as u5', 'u5.nik_tg', '=', 'd.gm_cons_nik')
+                                                            ->leftJoin('hcm.users as u6', 'u6.nik_tg', '=', 'd.mgr_proc_nik')
+                                                            ->leftJoin('hcm.users as u7', 'u7.nik_tg', '=', 'd.vp_proc_nik')
+                                                            ->leftJoin('hcm.users as u8', 'u8.nik_tg', '=', 'd.se_nik')
+                                                            ->leftJoin('hcm.users as u9', 'u9.nik_tg', '=', 'd.off_proc_nik')
+                                                            ->leftJoin('master_sow as msw', 'msw.id', '=', 'd.id_sow')
                                                             ->orderBy('d.id_status', 'asc')
                                                             ->get();
         if (count($data['document']) == 0){
@@ -219,6 +239,8 @@ class MainController extends Controller
                 $data['latest_pic'] = 'Solution Engineering';
             } else if ($doc->id_status == 10){
                 $data['latest_pic'] = 'Officer Procurement';
+            } else {
+                $data['latest_pic'] = 'None';
             }
         }
         if ((($doc->id_status == 1) || ($doc->id_status == 11)) && ($doc->pm_nik == $nik_tg)){
@@ -257,6 +279,9 @@ class MainController extends Controller
         if (($doc->id_status == 10) && ($doc->off_proc_nik == $nik_tg)){
             $data['privilege'] = 1;
             $data['latest_pic'] = 'Officer Procurement';
+        }
+        if (!isset($data['latest_pic'])){
+            $data['latest_pic'] = 'None';
         }
         $cek_pm = DB::table('master_pm')->where('pm', $nik_tg)->select('*')->get();
         if (count($cek_pm) > 0){
@@ -405,7 +430,8 @@ class MainController extends Controller
                                                             ->select('*')
                                                             ->get();
                     if (count($check_nomor) > 0){
-                        $nomor = $check_nomor->first()->nomor + 1;
+                        $check_nomor = $check_nomor->first();
+                        $nomor = $check_nomor->nomor + 1;
                         $nomor_str = $nomor;
                         if ($nomor < 1000){
                             $nomor_str = '0'.$nomor_str;
@@ -416,8 +442,19 @@ class MainController extends Controller
                         if ($nomor < 10){
                             $nomor_str = '0'.$nomor_str;
                         }
+                        $update_nomor = DB::table('master_nomor')->where('id', $check_nomor->id)
+                                                                 ->update([
+                                                                    'nomor' => $nomor
+                                                                 ]);
                     } else {
                         $nomor_str = '0001';
+                        $insert_nomor = DB::table('master_nomor')->insertGetId([
+                                                                    'nomor' => 1,
+                                                                    'regional' => $check->region,
+                                                                    'id_sow' => $input['id_sow'],
+                                                                    'bulan' => $bulan,
+                                                                    'tahun' => $tahun
+                                                                ]);
                     }
                     $nomor_boq = $nomor_str.'/'.$check->region.'/'.$input['id_sow'].'/BoQ/'.$b.'/'.$tahun;
                 } else {
@@ -610,5 +647,44 @@ class MainController extends Controller
             'datetime' => $datetime
         ]);
         return redirect()->route('detail_list_document', ['id' => $insert])->with('success', 'Flow dokumen baru berhasil digenerate');
+    }
+
+    public function print_document(Request $request, $id){
+        $nik_tg = $request->session()->get('user')->nik_tg;
+        $name = $request->session()->get('user')->name;
+        $data['document'] = DB::table('document_tracking as d')->select(
+                                                                'd.*',
+                                                                'ms.status',
+                                                                'ms.class',
+                                                                'u1.name as pm_name1', 'u1.short_posisi as pm_posisi1',
+                                                                'u2.name as mgr_region_name1', 'u2.short_posisi as mgr_region_posisi1',
+                                                                'u3.name as gm_area_name1', 'u3.short_posisi as gm_area_posisi1',
+                                                                'u4.name as mgr_cons_name1', 'u4.short_posisi as mgr_cons_posisi1',
+                                                                'u5.name as gm_cons_name1', 'u5.short_posisi as gm_cons_posisi1',
+                                                                'u6.name as mgr_proc_name1', 'u6.short_posisi as mgr_proc_posisi1',
+                                                                'u7.name as vp_proc_name1', 'u7.short_posisi as vp_proc_posisi1',
+                                                                'u8.name as se_name1', 'u8.short_posisi as se_posisi1',
+                                                                'u9.name as off_proc_name1', 'u9.short_posisi as off_proc_posisi1',
+                                                                'msw.sow'
+                                                            )->where('d.id', $id)
+                                                            ->leftJoin('master_status as ms', 'ms.id', '=', 'd.id_status')
+                                                            ->leftJoin('hcm.users as u1', 'u1.nik_tg', '=', 'd.pm_nik')
+                                                            ->leftJoin('hcm.users as u2', 'u2.nik_tg', '=', 'd.mgr_region_nik')
+                                                            ->leftJoin('hcm.users as u3', 'u3.nik_tg', '=', 'd.gm_area_nik')
+                                                            ->leftJoin('hcm.users as u4', 'u4.nik_tg', '=', 'd.mgr_cons_nik')
+                                                            ->leftJoin('hcm.users as u5', 'u5.nik_tg', '=', 'd.gm_cons_nik')
+                                                            ->leftJoin('hcm.users as u6', 'u6.nik_tg', '=', 'd.mgr_proc_nik')
+                                                            ->leftJoin('hcm.users as u7', 'u7.nik_tg', '=', 'd.vp_proc_nik')
+                                                            ->leftJoin('hcm.users as u8', 'u8.nik_tg', '=', 'd.se_nik')
+                                                            ->leftJoin('hcm.users as u9', 'u9.nik_tg', '=', 'd.off_proc_nik')
+                                                            ->leftJoin('master_sow as msw', 'msw.id', '=', 'd.id_sow')
+                                                            ->orderBy('d.id_status', 'asc')
+                                                            ->get();
+        if (count($data['document']) > 0){
+            $data['document'] = $data['document']->first();
+        } else {
+            return back()->with('error', 'ID Dokumen tidak ditemukan!');
+        }
+        return view('print_document', compact('data'));
     }
 }

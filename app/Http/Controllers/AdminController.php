@@ -265,4 +265,22 @@ class AdminController extends Controller
             return redirect()->route('upload_spmk')->with('error', 'Mohon upload file yang sesuai');
         }
     }
+
+    public function deactivate_pid (Request $request, $id){
+        $nik_tg = $request->session()->get('user')->nik_tg;
+        $datetime = date('Y-m-d H:i:s');
+        $delete = DB::table('document_tracking')->where('id', $id)->update([
+            'id_status' => 12
+        ]);
+        $activity = 'Deactivate PID, ID '.$id;
+        $status = 'SUCCESS';
+        DB::table('log')->insert([
+                        'nik_tg' => $nik_tg,
+                        'activity' => $activity,
+                        'status' => $status,
+                        'datetime' => $datetime
+                    ]);
+        $request->session()->flash('success', 'PID berhasi dideactivate');
+        return 1;
+    }
 }

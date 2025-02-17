@@ -16,6 +16,11 @@
             <h3 class="card-label">PID {{$data['document']->pid}}</h3>
         </div>
         <div class="card-toolbar">
+            @if (session()->get('special'))
+            @if ($data['document']->id_status != 12)
+            <button type="button" class="btn btn-sm btn-danger me-5 btn-deactivate">Deactivate PID</button>
+            @endif
+            @endif
             @if ($data['new_doc'])
             <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_1">
                 Tambahkan Flow Dokumen Baru
@@ -112,6 +117,23 @@
                             <div class="fs-5 fw-bolder text-muted mb-2">Status</div>
                             <div class="fs-6 "><span class="badge badge-sm badge-{{$data['document']->class}}">{{$data['document']->status}}</span></div>
                         </div>
+                        <div class="my-5">
+                            <div class="fs-2 fw-bolder">Upload PM</div>
+                        </div>
+                        <div class="mb-5">
+                            <div class="fs-5 fw-bolder text-muted mb-2">Dokumen Upload PM</div>
+                            @foreach($data['document_pm'] as $doc)
+                            <a href="{{ asset('/') }}/{{$doc}}">{{$doc}}</a>
+                            @endforeach
+                        </div>
+                        <div class="mb-5">
+                            <div class="fs-5 fw-bolder text-muted mb-2">SoW</div>
+                            <div class="fs-6 ">{{$data['document']->sow}}</div>
+                        </div>
+                        <div class="mb-5">
+                            <div class="fs-5 fw-bolder text-muted mb-2">Amount Awal</div>
+                            <div class="fs-6 ">{{$data['document']->amount_awal}}</div>
+                        </div>
                     </div>
                     <div class="col-lg-3">
                         <div class="mb-5">
@@ -131,8 +153,27 @@
                             <div class="fs-6 ">@php echo number_format($data['document']->amount, 0,',','.')@endphp</div>
                         </div>
                         <div class="mb-5">
+                            <div class="fs-5 fw-bolder text-muted mb-2">Nomor BoQ</div>
+                            <div class="fs-6 ">{{$data['document']->nomor_boq}}</div>
+                        </div>
+                        <div class="my-5">
+                            <div class="fs-2 fw-bolder">Upload Procurement</div>
+                        </div>
+                        <div class="mb-5">
+                            <div class="fs-5 fw-bolder text-muted mb-2">Dokumen Upload PM</div>
+                            @foreach($data['document_proc'] as $doc)
+                            <a href="{{ asset('/') }}/{{$doc}}">{{$doc}}</a>
+                            @endforeach
+                        </div>
+                        <div class="mb-5">
                             <div class="fs-5 fw-bolder text-muted mb-2">Amount Procurement</div>
                             <div class="fs-6 ">@php echo number_format($data['document']->amount_proc, 0,',','.')@endphp</div>
+                        </div>
+                        <div class="my-5">
+                            <div class="fs-2 fw-bolder">Print BA Approval BoQ</div>
+                        </div>
+                        <div class="mb-5">
+                            <a class="btn btn-sm btn-info" href="{{ url('/dashboard/print_document') }}/{{$data['document']->id}}">Print BA</a>
                         </div>
                     </div>
                     <div class="col-lg-3 mb-10">
@@ -142,18 +183,20 @@
                                 @if ($data['document']->pm_date != null)
                                 <div class="d-flex flex-column align-items-end">
                                     <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
-                                    <div class="fs-7">{{ date('d M Y H:i:s', strtotime($data['document']->pm_date)) }}</div>
                                 </div>
                                 @else
                                 <div class="d-flex flex-column align-items-end">
                                     <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
-                                    <div class="fs-7">NY Approved</div>
                                 </div>
                                 @endif
                             </div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->pm_name}}</div>
+                            @if ($data['document']->pm_date != null)
+                            <div class="fs-7 mb-2">{{ date('d M Y H:i:s', strtotime($data['document']->pm_date)) }}</div>
+                            <div class="fs-7 mb-2">"{{ $data['document']->pm_komentar }}"</div>
+                            @endif
+                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->pm_name1}}</div>
                             <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->pm_nik}}</div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->pm_posisi}}</div>
+                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->pm_posisi1}}</div>
                         </div>
                         <div class="mb-2 border border-gray-600 rounded p-5">
                             <div class="fs-6 fw-bolder d-flex flex-row justify-content-between align-items-center">
@@ -161,18 +204,21 @@
                                 @if ($data['document']->mgr_region_date != null)
                                 <div class="d-flex flex-column align-items-end">
                                     <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
-                                    <div class="fs-7">{{ date('d M Y H:i:s', strtotime($data['document']->mgr_region_date)) }}</div>
+                                    
                                 </div>
                                 @else
                                 <div class="d-flex flex-column align-items-end">
                                     <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
-                                    <div class="fs-7">NY Approved</div>
                                 </div>
                                 @endif
                             </div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->mgr_region_name}}</div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->mgr_region_nik}}</div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->mgr_region_posisi}}</div>
+                            @if ($data['document']->mgr_region_date != null)
+                            <div class="fs-7 mb-2">{{ date('d M Y H:i:s', strtotime($data['document']->mgr_region_date)) }}</div>
+                            <div class="fs-7 mb-2">"{{ $data['document']->mgr_region_komentar }}"</div>
+                            @endif
+                            <div class="fs-7 text-gray-700">{{$data['document']->mgr_region_name1}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->mgr_region_nik}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->mgr_region_posisi1}}</div>
                         </div>
                         <div class="mb-2 border border-gray-600 rounded p-5">
                             <div class="fs-6 fw-bolder d-flex flex-row justify-content-between align-items-center">
@@ -180,18 +226,21 @@
                                 @if ($data['document']->gm_area_date != null)
                                 <div class="d-flex flex-column align-items-end">
                                     <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
-                                    <div class="fs-7">{{ date('d M Y H:i:s', strtotime($data['document']->gm_area_date)) }}</div>
+                                    
                                 </div>
                                 @else
                                 <div class="d-flex flex-column align-items-end">
                                     <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
-                                    <div class="fs-7">NY Approved</div>
                                 </div>
                                 @endif
                             </div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->gm_area_name}}</div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->gm_area_nik}}</div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->gm_area_posisi}}</div>
+                            @if ($data['document']->gm_area_date != null)
+                            <div class="fs-7 mb-2">{{ date('d M Y H:i:s', strtotime($data['document']->gm_area_date)) }}</div>
+                            <div class="fs-7 mb-2">"{{ $data['document']->gm_area_komentar }}"</div>
+                            @endif
+                            <div class="fs-7 text-gray-700">{{$data['document']->gm_area_name1}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->gm_area_nik}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->gm_area_posisi1}}</div>
                         </div>
                         <div class="mb-2 border border-gray-600 rounded p-5">
                             <div class="fs-6 fw-bolder d-flex flex-row justify-content-between align-items-center">
@@ -199,18 +248,21 @@
                                 @if ($data['document']->mgr_cons_date != null)
                                 <div class="d-flex flex-column align-items-end">
                                     <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
-                                    <div class="fs-7">{{ date('d M Y H:i:s', strtotime($data['document']->mgr_cons_date)) }}</div>
+                                    
                                 </div>
                                 @else
                                 <div class="d-flex flex-column align-items-end">
                                     <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
-                                    <div class="fs-7">NY Approved</div>
                                 </div>
                                 @endif
                             </div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->mgr_cons_name}}</div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->mgr_cons_nik}}</div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->mgr_cons_posisi}}</div>
+                            @if ($data['document']->mgr_cons_date != null)
+                            <div class="fs-7">{{ date('d M Y H:i:s', strtotime($data['document']->mgr_cons_date)) }}</div>
+                            <div class="fs-7 mb-2">"{{ $data['document']->mgr_cons_komentar }}"</div>
+                            @endif
+                            <div class="fs-7 text-gray-700">{{$data['document']->mgr_cons_name1}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->mgr_cons_nik}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->mgr_cons_posisi1}}</div>
                         </div>
                         <div class="mb-2 border border-gray-600 rounded p-5">
                             <div class="fs-6 fw-bolder d-flex flex-row justify-content-between align-items-center">
@@ -218,18 +270,21 @@
                                 @if ($data['document']->gm_cons_date != null)
                                 <div class="d-flex flex-column align-items-end">
                                     <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
-                                    <div class="fs-7">{{ date('d M Y H:i:s', strtotime($data['document']->gm_cons_date)) }}</div>
+                                    
                                 </div>
                                 @else
                                 <div class="d-flex flex-column align-items-end">
                                     <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
-                                    <div class="fs-7">NY Approved</div>
                                 </div>
                                 @endif
                             </div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->gm_cons_name}}</div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->gm_cons_nik}}</div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->gm_cons_posisi}}</div>
+                            @if ($data['document']->gm_cons_date != null)
+                            <div class="fs-7 mb-2">{{ date('d M Y H:i:s', strtotime($data['document']->gm_cons_date)) }}</div>
+                            <div class="fs-7 mb-2">"{{ $data['document']->gm_cons_komentar }}"</div>
+                            @endif
+                            <div class="fs-7 text-gray-700">{{$data['document']->gm_cons_name1}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->gm_cons_nik}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->gm_cons_posisi1}}</div>
                         </div>
                         <div class="mb-2 border border-gray-600 rounded p-5">
                             <div class="fs-6 fw-bolder d-flex flex-row justify-content-between align-items-center">
@@ -237,18 +292,20 @@
                                 @if ($data['document']->mgr_proc_date != null)
                                 <div class="d-flex flex-column align-items-end">
                                     <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
-                                    <div class="fs-7">{{ date('d M Y H:i:s', strtotime($data['document']->mgr_proc_date)) }}</div>
                                 </div>
                                 @else
                                 <div class="d-flex flex-column align-items-end">
                                     <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
-                                    <div class="fs-7">NY Approved</div>
                                 </div>
                                 @endif
                             </div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->mgr_proc_name}}</div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->mgr_proc_nik}}</div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->mgr_proc_posisi}}</div>
+                            @if ($data['document']->mgr_proc_date != null)
+                            <div class="fs-7 mb-2">{{ date('d M Y H:i:s', strtotime($data['document']->mgr_proc_date)) }}</div>
+                            <div class="fs-7 mb-2">"{{ $data['document']->mgr_proc_komentar }}"</div>
+                            @endif
+                            <div class="fs-7 text-gray-700">{{$data['document']->mgr_proc_name1}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->mgr_proc_nik}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->mgr_proc_posisi1}}</div>
                         </div>
                         <div class="mb-2 border border-gray-600 rounded p-5">
                             <div class="fs-6 fw-bolder d-flex flex-row justify-content-between align-items-center">
@@ -256,18 +313,41 @@
                                 @if ($data['document']->vp_proc_date != null)
                                 <div class="d-flex flex-column align-items-end">
                                     <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
-                                    <div class="fs-7">{{ date('d M Y H:i:s', strtotime($data['document']->vp_proc_date)) }}</div>
                                 </div>
                                 @else
                                 <div class="d-flex flex-column align-items-end">
                                     <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
-                                    <div class="fs-7">NY Approved</div>
                                 </div>
                                 @endif
                             </div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->vp_proc_name}}</div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->vp_proc_nik}}</div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->vp_proc_posisi}}</div>
+                            @if ($data['document']->vp_proc_date != null)
+                            <div class="fs-7 mb-2">{{ date('d M Y H:i:s', strtotime($data['document']->vp_proc_date)) }}</div>
+                            <div class="fs-7 mb-2">"{{ $data['document']->vp_proc_komentar }}"</div>
+                            @endif
+                            <div class="fs-7 text-gray-700">{{$data['document']->vp_proc_name1}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->vp_proc_nik}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->vp_proc_posisi1}}</div>
+                        </div>
+                        <div class="mb-2 border border-gray-600 rounded p-5">
+                            <div class="fs-6 fw-bolder d-flex flex-row justify-content-between align-items-center">
+                                Solution Engineering Status
+                                @if ($data['document']->se_date != null)
+                                <div class="d-flex flex-column align-items-end">
+                                    <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
+                                </div>
+                                @else
+                                <div class="d-flex flex-column align-items-end">
+                                    <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
+                                </div>
+                                @endif
+                            </div>
+                            @if ($data['document']->se_date != null)
+                            <div class="fs-7 mb-2">{{ date('d M Y H:i:s', strtotime($data['document']->se_date)) }}</div>
+                            <div class="fs-7 mb-2">"{{ $data['document']->se_komentar }}"</div>
+                            @endif
+                            <div class="fs-7 text-gray-700">{{$data['document']->se_name1}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->se_nik}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->se_posisi1}}</div>
                         </div>
                         <div class="mb-2 border border-gray-600 rounded p-5">
                             <div class="fs-6 fw-bolder d-flex flex-row justify-content-between align-items-center">
@@ -275,24 +355,27 @@
                                 @if ($data['document']->off_proc_date != null)
                                 <div class="d-flex flex-column align-items-end">
                                     <div class="fs-7"><span class="badge badge-success badge-sm">APPROVED</span></div>
-                                    <div class="fs-7">{{ date('d M Y H:i:s', strtotime($data['document']->off_proc_date)) }}</div>
+                                    
                                 </div>
                                 @else
                                 <div class="d-flex flex-column align-items-end">
                                     <div class="fs-7"><span class="badge badge-dark badge-sm">PENDING</span></div>
-                                    <div class="fs-7">NY Approved</div>
                                 </div>
                                 @endif
                             </div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->off_proc_name}}</div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->off_proc_nik}}</div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->off_proc_posisi}}</div>
+                            @if ($data['document']->off_proc_date != null)
+                            <div class="fs-7 mb-2">{{ date('d M Y H:i:s', strtotime($data['document']->off_proc_date)) }}</div>
+                            <div class="fs-7 mb-2">"{{ $data['document']->off_proc_komentar }}"</div>
+                            @endif
+                            <div class="fs-7 text-gray-700">{{$data['document']->off_proc_name1}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->off_proc_nik}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->off_proc_posisi1}}</div>
                         </div>
                     </div>
                     <div class="col-lg-3 mb-10">
                         <h2 class="d-block fs-2 fw-bolder mb-10">Komentar</h2>
                         <!--begin::Timeline-->
-                        <div class="timeline" style="max-height: 1100px; overflow-y:scroll;">
+                        <div class="timeline" style="max-height: 2000px; overflow-y:scroll;">
                             @foreach($data['komentar'] as $komentar)
                             <!--begin::Timeline item-->
                             <div class="timeline-item">
@@ -324,12 +407,12 @@
                                 <div class="timeline-content mb-3 mt-n1">
                                     <!--begin::Timeline heading-->
                                     <div class="pe-3 mb-5">
-                                        <div class="fs-6 fw-bolder text-muted mb-1">{{$komentar->activity}}</div>
+                                        <div class="fs-7 fw-bolder text-muted mb-1">{{$komentar->activity}}</div>
                                         <!--begin::Title-->
-                                        <div class="fs-5 fw-bold mb-2">{{$komentar->komentar}}</div>
+                                        <div class="fs-7 fw-bold mb-2">{{$komentar->komentar}}</div>
                                         <!--end::Title-->
                                         <!--begin::Description-->
-                                        <div class="d-flex align-items-center mt-1 fs-6">
+                                        <div class="d-flex align-items-center mt-1 fs-7">
                                             <!--begin::Info-->
                                             <div class="text-muted me-2 fs-7"> {{$komentar->datetime}} oleh {{$komentar->nik_tg}} - {{$komentar->name}}</div>
                                             <!--end::Info-->
@@ -345,16 +428,16 @@
                         </div>
                     <!--end::Timeline-->
                     </div>
-                    <div class="col-lg-6">
-                        <div class="mb-2">
-                            <div class="fs-5 fw-bolder">Get Latest Document:</div>
+                    {{-- <div class="col-lg-6"> --}}
+                        {{-- <div class="mb-2"> --}}
+                            {{-- <div class="fs-5 fw-bolder">Get Latest Document:</div> --}}
                             @foreach($data['latest_document'] as $l)
-                            <div><a href="{{ asset('/storage')}}/{{$l}}" target="_blank">{{$l}}</a></div>
+                            {{-- <div><a href="{{ asset('/storage')}}/{{$l}}" target="_blank">{{$l}}</a></div> --}}
                             @endforeach
-                        </div>
-                    </div>
+                        {{-- </div> --}}
+                    {{-- </div> --}}
                     @if ($data['privilege'])
-                    <div class="col-lg-6">
+                    <div class="col-lg-12">
                         <div class="mb-5">
                             <form action="{{url('/dashboard/list_document')}}/{{$data['document']->id}}" method="POST" enctype="multipart/form-data" class="form">
                                 @csrf
@@ -432,7 +515,7 @@
                                 </div>
                                 <input type="hidden" name="approve_or_return" class="approve_or_return" value="1">
                                 @if (($data['document']->id_status != 1) && ($data['document']->id_status != 11))
-                                <button type="submit" class="btn btn-danger btn-return btn-sm me-5">Return</button>
+                                <button type="button" class="btn btn-danger btn-return btn-sm me-5">Return</button>
                                 @endif
                                 @if ($data['document']->id_status != 10)
                                 <button type="submit" class="btn btn-primary btn-sm">Submit</button>
@@ -489,7 +572,9 @@
                                 $.alert('Mohon isi komentar lebih dari 5 karakter');
                             } else {
                                 $('.approve_or_return').val('0');
-                                $('.form').submit();
+                                setTimeout(function() {
+                                    $('.form').submit();
+                                }, 700);
                             }
                         }
                     },
@@ -498,6 +583,41 @@
                 }
             });
         })
+        @if (session()->get('special'))
+        $('.btn-deactivate').on('click', function(){
+            $.confirm({
+                title: 'Konfirmasi Deactivate PID',
+                content: 'Apakah anda yakin akan medeactivate PID ini?',
+                type: 'red',
+                typeAnimated: true,
+                buttons: {
+                    ya: {
+                        text: 'Submit',
+                        btnClass: 'btn-red',
+                        action: function(){
+                            var token = $('input[name="_token"]').val();
+                            var formData = new FormData();
+                            formData.append('_token', token);
+                            $.ajax({
+                              url: "{{ url('/')}}/admin/deactivate_pid/{{$data['document']->id}}",
+                              type: 'POST',
+                              data: formData,
+                              processData: false,
+                              contentType: false,
+                              success: function(response) {
+                                  location.reload();
+                              },error: function(error){
+                                  console.log(error);
+                              }
+                          });
+                        }
+                    },
+                    cancel: function () {
+                    }
+                }
+            });
+        })
+        @endif
     })
 </script>
 @stop 

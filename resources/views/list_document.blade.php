@@ -56,7 +56,21 @@
         </div>
         @endif
         <div class="row">
-            <div class="col-lg-2">
+            <div class="col-lg-3">
+                <div class="fv-row mb-10 fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
+                    <!--begin::Label-->
+                    <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
+                        <span>Filter BoQ</span>
+                        <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Filter BoQ"></i>
+                    </label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <input type="text" name="boq" class="form-control form-control-solid">
+                    <!--end::Input-->
+                    <div class="fv-plugins-message-container invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="col-lg-3">
                 <div class="fv-row mb-10 fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
                     <!--begin::Label-->
                     <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
@@ -70,7 +84,7 @@
                     <div class="fv-plugins-message-container invalid-feedback"></div>
                 </div>
             </div>
-            <div class="col-lg-2">
+            <div class="col-lg-3">
                 <div class="fv-row mb-10 fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
                     <!--begin::Label-->
                     <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
@@ -89,7 +103,7 @@
                     <div class="fv-plugins-message-container invalid-feedback"></div>
                 </div>
             </div>
-            <div class="col-lg-2">
+            <div class="col-lg-3">
                 <div class="fv-row mb-10 fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
                     <!--begin::Label-->
                     <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
@@ -108,7 +122,7 @@
                     <div class="fv-plugins-message-container invalid-feedback"></div>
                 </div>
             </div>
-            <div class="col-lg-2">
+            <div class="col-lg-4">
                 <div class="fv-row mb-10 fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
                     <!--begin::Label-->
                     <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
@@ -127,7 +141,7 @@
                     <div class="fv-plugins-message-container invalid-feedback"></div>
                 </div>
             </div>
-            <div class="col-lg-2">
+            <div class="col-lg-4">
                 <div class="fv-row mb-10 fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
                     <!--begin::Label-->
                     <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
@@ -141,7 +155,7 @@
                     <div class="fv-plugins-message-container invalid-feedback"></div>
                 </div>
             </div>
-            <div class="col-lg-2">
+            <div class="col-lg-4">
                 <div class="fv-row mb-10 fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
                     <!--begin::Label-->
                     <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
@@ -166,6 +180,7 @@
             <thead>
                 <tr>
                     <th>No</th>
+                    <th>Nomor BoQ</th>
                     <th>PID</th>
                     <th>Site Name</th>
                     <th>Region</th>
@@ -183,6 +198,7 @@
                 @foreach($data['document'] as $d)
                 <tr>
                     <td>{{$loop->iteration}}</td>
+                    <td>{{$d->nomor_boq}}</td>
                     <td>{{$d->pid}}</td>
                     <td>{{$d->site_name}}</td>
                     <td>{{$d->region}}</td>
@@ -203,6 +219,7 @@
             <tfoot>
                 <tr>
                     <th>No</th>
+                    <th>Nomor BoQ</th>
                     <th>PID</th>
                     <th>Site Name</th>
                     <th>Region</th>
@@ -276,26 +293,32 @@
             ],
 		});
 
-        $('input[name="pid"]').on('keyup', function(){
+        $('input[name="boq"]').on('keyup', function(){
           datatable.columns(1).search(this.value).draw();   
             $($.fn.dataTable.tables(true)).DataTable()
         .columns.adjust();
         });
 
+        $('input[name="pid"]').on('keyup', function(){
+          datatable.columns(2).search(this.value).draw();   
+            $($.fn.dataTable.tables(true)).DataTable()
+        .columns.adjust();
+        });
+
         $('select[name="scope"]').on('change', function(){
-          datatable.columns(4).search(this.value).draw();   
+          datatable.columns(5).search(this.value).draw();   
             $($.fn.dataTable.tables(true)).DataTable()
         .columns.adjust();
         });
 
         $('select[name="supplier_name"]').on('change', function(){
-          datatable.columns(6).search(this.value).draw();   
+          datatable.columns(7).search(this.value).draw();   
             $($.fn.dataTable.tables(true)).DataTable()
         .columns.adjust();
         });
 
         $('input[name="spmk"]').on('keyup', function(){
-          datatable.columns(7).search(this.value).draw();   
+          datatable.columns(8).search(this.value).draw();   
             $($.fn.dataTable.tables(true)).DataTable()
         .columns.adjust();
         });
@@ -303,23 +326,23 @@
 
 
         $('select[name="region"]').on('change', function(){
-          datatable.columns(3).search(this.value).draw();   
+          datatable.columns(4).search(this.value).draw();   
             $($.fn.dataTable.tables(true)).DataTable()
         .columns.adjust();
         });
 
         @if (isset($data['q_region']))
-            datatable.columns(3).search("{{$data['q_region']}}").draw();   
+            datatable.columns(4).search("{{$data['q_region']}}").draw();   
         @endif
 
         $('select[name="status"]').on('change', function(){
-          datatable.columns(10).search(this.value).draw();   
+          datatable.columns(11).search(this.value).draw();   
             $($.fn.dataTable.tables(true)).DataTable()
         .columns.adjust();
         });
 
         @if (isset($data['q_status']))
-            datatable.columns(10).search("{{$data['q_status']}}").draw();   
+            datatable.columns(11).search("{{$data['q_status']}}").draw();   
         @endif
 	};
 
