@@ -13,7 +13,10 @@
                 <td colspan="5" class="fs-7">Dokumen ini sebagai pengganti approval manual, berlaku hanya untuk nomor BoQ dengan nominal sesuai final negosiasi procurement</td>
             </tr>
             <tr class="p-0">
-                <td colspan="5" class="fs-6 fw-bolder p-0">PID: {{$data['document']->pid}} Site Name: {{$data['document']->site_name}}</td>
+                <td colspan="5" class="fs-6 fw-bolder p-0">PID: {{$data['document']->pid}} || Site Name: {{$data['document']->site_name}}</td>
+            </tr>
+            <tr class="p-0">
+                <td colspan="5" class="fs-6 fw-bolder p-0">Scope of Work: {{$data['document']->scope}} || SPMK: {{$data['document']->spmk}}</td>
             </tr>
             <tr class="p-0">
                 <td colspan="5" class="fs-6 fw-bolder p-0">Nomor BoQ: {{$data['document']->nomor_boq}}</td>
@@ -215,7 +218,7 @@
                 <td style="font-size: 10px;" class="p-2"></td>
             </tr>
             <tr>
-                <td colspan="5" class="fs-4">Link ke Aplikasi: {{ url('/dashboard/list_document')}}/{{$data['document']->id}}</td>
+                <td colspan="5" class="fs-4">Link ke Aplikasi: <a href="{{ url('/dashboard/list_document')}}/{{$data['document']->id}}">{{ url('/dashboard/list_document')}}/{{$data['document']->id}}</a></td>
             </tr>
         </tbody>
     </table>

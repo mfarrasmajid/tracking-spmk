@@ -96,84 +96,107 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="row">
-                    <div class="col-lg-3">
-                        <div class="mb-5">
-                            <div class="fs-5 fw-bolder text-muted mb-2">PID</div>
-                            <div class="fs-6 ">{{$data['document']->pid}}</div>
+                    <div class="col-lg-6">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-5">
+                                    <div class="fs-5 fw-bolder text-muted mb-2">PID</div>
+                                    <div class="fs-6 ">{{$data['document']->pid}}</div>
+                                </div>
+                                <div class="mb-5">
+                                    <div class="fs-5 fw-bolder text-muted mb-2">Site Name</div>
+                                    <div class="fs-6 ">{{$data['document']->site_name}}</div>
+                                </div>
+                                <div class="mb-5">
+                                    <div class="fs-5 fw-bolder text-muted mb-2">Region</div>
+                                    <div class="fs-6 ">{{$data['document']->region}}</div>
+                                </div>
+                                <div class="mb-5">
+                                    <div class="fs-5 fw-bolder text-muted mb-2">Supplier Name</div>
+                                    <div class="fs-6 ">{{$data['document']->supplier_name}}</div>
+                                </div>
+                                <div class="mb-5">
+                                    <div class="fs-5 fw-bolder text-muted mb-2">Status</div>
+                                    <div class="fs-6 "><span class="badge badge-sm badge-{{$data['document']->class}}">{{$data['document']->status}}</span></div>
+                                </div>
+                                <div class="my-5">
+                                    <div class="fs-2 fw-bolder">Upload PM</div>
+                                </div>
+                                <div class="mb-5">
+                                    <div class="fs-5 fw-bolder text-muted mb-2">Dokumen Upload PM</div>
+                                    @foreach($data['document_pm'] as $doc)
+                                    <a href="{{ asset('/storage') }}/{{$doc}}">{{$doc}}</a>
+                                    @endforeach
+                                </div>
+                                <div class="mb-5">
+                                    <div class="fs-5 fw-bolder text-muted mb-2">Amount Awal</div>
+                                    <div class="fs-6 ">@php echo number_format($data['document']->amount_awal, 0, ',', '.'); @endphp</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-5">
+                                    <div class="fs-5 fw-bolder text-muted mb-2">Scope of Work</div>
+                                    <div class="fs-6 ">{{$data['document']->scope}}</div>
+                                </div>
+                                <div class="mb-5">
+                                    <div class="fs-5 fw-bolder text-muted mb-2">SPMK</div>
+                                    <div class="fs-6 ">{{$data['document']->spmk}}</div>
+                                </div>
+                                <div class="mb-5">
+                                    <div class="fs-5 fw-bolder text-muted mb-2">Aging</div>
+                                    <div class="fs-6 ">{{$data['aging']}} hari</div>
+                                </div>
+                                <div class="mb-5">
+                                    <div class="fs-5 fw-bolder text-muted mb-2">Amount</div>
+                                    <div class="fs-6 ">@php echo number_format($data['document']->amount, 0,',','.')@endphp</div>
+                                </div>
+                                <div class="mb-5">
+                                    <div class="fs-5 fw-bolder text-muted mb-2">Nomor BoQ</div>
+                                    <div class="fs-6 ">{{$data['document']->nomor_boq}}</div>
+                                </div>
+                                <div class="my-5">
+                                    <div class="fs-2 fw-bolder">Upload Procurement</div>
+                                </div>
+                                <div class="mb-5">
+                                    <div class="fs-5 fw-bolder text-muted mb-2">Dokumen Upload Proc</div>
+                                    @foreach($data['document_proc'] as $doc)
+                                    <a href="{{ asset('/storage') }}/{{$doc}}">{{$doc}}</a>
+                                    @endforeach
+                                </div>
+                                <div class="mb-5">
+                                    <div class="fs-5 fw-bolder text-muted mb-2">Amount Procurement</div>
+                                    <div class="fs-6 ">@php echo number_format($data['document']->amount_proc, 0,',','.')@endphp</div>
+                                </div>
+                                <div class="my-5">
+                                    <div class="fs-2 fw-bolder">Print BA Approval BoQ</div>
+                                </div>
+                                <div class="mb-5">
+                                    <a class="btn btn-sm btn-info" href="{{ url('/dashboard/print_document') }}/{{$data['document']->id}}">Print BA</a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-5">
-                            <div class="fs-5 fw-bolder text-muted mb-2">Site Name</div>
-                            <div class="fs-6 ">{{$data['document']->site_name}}</div>
-                        </div>
-                        <div class="mb-5">
-                            <div class="fs-5 fw-bolder text-muted mb-2">Region</div>
-                            <div class="fs-6 ">{{$data['document']->region}}</div>
-                        </div>
-                        <div class="mb-5">
-                            <div class="fs-5 fw-bolder text-muted mb-2">Supplier Name</div>
-                            <div class="fs-6 ">{{$data['document']->supplier_name}}</div>
-                        </div>
-                        <div class="mb-5">
-                            <div class="fs-5 fw-bolder text-muted mb-2">Status</div>
-                            <div class="fs-6 "><span class="badge badge-sm badge-{{$data['document']->class}}">{{$data['document']->status}}</span></div>
-                        </div>
-                        <div class="my-5">
-                            <div class="fs-2 fw-bolder">Upload PM</div>
-                        </div>
-                        <div class="mb-5">
-                            <div class="fs-5 fw-bolder text-muted mb-2">Dokumen Upload PM</div>
-                            @foreach($data['document_pm'] as $doc)
-                            <a href="{{ asset('/') }}/{{$doc}}">{{$doc}}</a>
-                            @endforeach
-                        </div>
-                        <div class="mb-5">
-                            <div class="fs-5 fw-bolder text-muted mb-2">SoW</div>
-                            <div class="fs-6 ">{{$data['document']->sow}}</div>
-                        </div>
-                        <div class="mb-5">
-                            <div class="fs-5 fw-bolder text-muted mb-2">Amount Awal</div>
-                            <div class="fs-6 ">{{$data['document']->amount_awal}}</div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="mb-5">
-                            <div class="fs-5 fw-bolder text-muted mb-2">Scope of Work</div>
-                            <div class="fs-6 ">{{$data['document']->scope}}</div>
-                        </div>
-                        <div class="mb-5">
-                            <div class="fs-5 fw-bolder text-muted mb-2">SPMK</div>
-                            <div class="fs-6 ">{{$data['document']->spmk}}</div>
-                        </div>
-                        <div class="mb-5">
-                            <div class="fs-5 fw-bolder text-muted mb-2">Aging</div>
-                            <div class="fs-6 ">{{$data['aging']}} hari</div>
-                        </div>
-                        <div class="mb-5">
-                            <div class="fs-5 fw-bolder text-muted mb-2">Amount</div>
-                            <div class="fs-6 ">@php echo number_format($data['document']->amount, 0,',','.')@endphp</div>
-                        </div>
-                        <div class="mb-5">
-                            <div class="fs-5 fw-bolder text-muted mb-2">Nomor BoQ</div>
-                            <div class="fs-6 ">{{$data['document']->nomor_boq}}</div>
-                        </div>
-                        <div class="my-5">
-                            <div class="fs-2 fw-bolder">Upload Procurement</div>
-                        </div>
-                        <div class="mb-5">
-                            <div class="fs-5 fw-bolder text-muted mb-2">Dokumen Upload PM</div>
-                            @foreach($data['document_proc'] as $doc)
-                            <a href="{{ asset('/') }}/{{$doc}}">{{$doc}}</a>
-                            @endforeach
-                        </div>
-                        <div class="mb-5">
-                            <div class="fs-5 fw-bolder text-muted mb-2">Amount Procurement</div>
-                            <div class="fs-6 ">@php echo number_format($data['document']->amount_proc, 0,',','.')@endphp</div>
-                        </div>
-                        <div class="my-5">
-                            <div class="fs-2 fw-bolder">Print BA Approval BoQ</div>
-                        </div>
-                        <div class="mb-5">
-                            <a class="btn btn-sm btn-info" href="{{ url('/dashboard/print_document') }}/{{$data['document']->id}}">Print BA</a>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="fs-3 fw-bolder mb-5">Nilai SOW</div>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr class="border border-gray-500">
+                                            <th class="border border-gray-500 text-center">SOW</th>
+                                            <th class="border border-gray-500 text-center">Nilai Awal</th>
+                                            <th class="border border-gray-500 text-center">Nilai Final</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($data['sow'] as $s)
+                                        <tr class="border border-gray-500">
+                                            <td class="border border-gray-500 ps-5">{{$s->sow}}</td>
+                                            <td class="border border-gray-500 ps-5">@php echo number_format($data['nilai_sow'][$s->id], 0, ',', '.');@endphp</td>
+                                            <td class="border border-gray-500 ps-5">@php echo number_format($data['nilai_final_sow'][$s->id], 0, ',', '.');@endphp</td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-3 mb-10">
@@ -194,9 +217,9 @@
                             <div class="fs-7 mb-2">{{ date('d M Y H:i:s', strtotime($data['document']->pm_date)) }}</div>
                             <div class="fs-7 mb-2">"{{ $data['document']->pm_komentar }}"</div>
                             @endif
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->pm_name1}}</div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->pm_nik}}</div>
-                            <div class="fs-7 fw-bolder text-gray-700">{{$data['document']->pm_posisi1}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->pm_name1}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->pm_nik}}</div>
+                            <div class="fs-7 text-gray-700">{{$data['document']->pm_posisi1}}</div>
                         </div>
                         <div class="mb-2 border border-gray-600 rounded p-5">
                             <div class="fs-6 fw-bolder d-flex flex-row justify-content-between align-items-center">
@@ -472,13 +495,12 @@
                                 <div class="fv-row fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
                                     <!--begin::Label-->
                                     <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
-                                        <span class="required">Pilih SOW</span>
-                                        <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Pilih SOW"></i>
+                                        <span class="required">SOW</span>
+                                        <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="SOW Project"></i>
                                     </label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
-                                    <select name="id_sow" class="form-select form-select-solid" data-control="select2" required data-placeholder="Pilih SOW">
-                                        <option></option>
+                                    <select name="id_sow" class="form-select form-select-solid" data-control="select2" data-placeholder="SOW">
                                         @foreach($data['sow'] as $s)
                                         <option value="{{$s->id}}">{{$s->sow}}</option>
                                         @endforeach
@@ -486,12 +508,30 @@
                                     <!--end::Input-->
                                     <div class="fv-plugins-message-container invalid-feedback"></div>
                                 </div>
+                                <div class="row">
+                                    @foreach($data['sow'] as $sow)
+                                    <div class="col-lg-3">
+                                        <div class="fv-row fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
+                                            <!--begin::Label-->
+                                            <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
+                                                <span>Nilai {{$sow->sow}}</span>
+                                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Nilai SOW"></i>
+                                            </label>
+                                            <!--end::Label-->
+                                            <!--begin::Input-->
+                                            <input type="text" name="nilai_{{$sow->id}}" class="form-control form-control-solid number" value="{{$data['nilai_sow'][$sow->id]}}">
+                                            <!--end::Input-->
+                                            <div class="fv-plugins-message-container invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
                                 @endif
                                 @if ($data['document']->id_status == 6)
                                 <div class="fv-row fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
                                     <!--begin::Label-->
                                     <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
-                                        <span class="required">Input Nilai Negosiasi</span>
+                                        <span class="required">Input Nilai Negosiasi Final</span>
                                         <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Amount Procurement"></i>
                                     </label>
                                     <!--end::Label-->
@@ -500,7 +540,25 @@
                                     <!--end::Input-->
                                     <div class="fv-plugins-message-container invalid-feedback"></div>
                                 </div>
+                                <div class="row">
+                                @foreach($data['sow'] as $sow)
+                                    <div class="col-lg-3">
+                                        <div class="fv-row fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
+                                            <!--begin::Label-->
+                                            <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
+                                                <span>Nilai Final {{$sow->sow}}</span>
+                                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Nilai SOW"></i>
+                                            </label>
+                                            <!--end::Label-->
+                                            <!--begin::Input-->
+                                            <input type="text" name="nilai_final_{{$sow->id}}" class="form-control form-control-solid number" value="{{$data['nilai_sow'][$sow->id]}}">
+                                            <!--end::Input-->
+                                            <div class="fv-plugins-message-container invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                    @endforeach
                                 @endif
+                                </div>
                                 <div class="fv-row fv-plugins-icon-container fv-plugins-bootstrap5-row-valid">
                                     <!--begin::Label-->
                                     <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
@@ -544,6 +602,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
 <style>
     .dataTables_wrapper .dataTable th, .dataTables_wrapper .dataTable td {padding: 5px; font-size: 12px;}
+    .table tbody tr:last-child td, .table tbody tr:last-child th, .table tfoot tr:last-child td, .table tfoot tr:last-child th, .table tbody tr:last-child, .table tfoot tr:last-child {border-bottom: 1px solid #a1a5b7 !important;}
 </style>
 @stop 
 

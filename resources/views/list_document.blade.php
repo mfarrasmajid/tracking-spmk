@@ -16,6 +16,7 @@
             <h3 class="card-label">List Document</h3>
         </div>
         <div class="card-toolbar">
+            <a class="btn btn-sm btn-primary" href="{{ url('/dashboard/export_csv')}}">Export CSV</a>
         </div>
     </div>
     <div class="card-body">
@@ -189,7 +190,8 @@
                     <th>Supplier Name</th>
                     <th>SPMK</th>
                     <th>Aging</th>
-                    <th>Amount Procurement</th>
+                    <th>Amount Awal</th>
+                    <th>Amount Final</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -210,6 +212,7 @@
                         $aging = floor((strtotime(now()) - strtotime($d->last_date)) / 86400);
                     @endphp
                     <td>{{$aging}} hari</td>
+                    <td>@php echo number_format($d->amount_awal, 0, ',','.'); @endphp</td>
                     <td>@php echo number_format($d->amount_proc, 0, ',','.'); @endphp</td>
                     <td><span class="badge badge-sm badge-{{$d->class}}">{{$d->status}}</span></td>
                     <td>{{$d->id}}</td>
@@ -228,7 +231,8 @@
                     <th>Supplier Name</th>
                     <th>SPMK</th>
                     <th>Aging</th>
-                    <th>Amount Procurement</th>
+                    <th>Amount Awal</th>
+                    <th>Amount Final</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -336,13 +340,13 @@
         @endif
 
         $('select[name="status"]').on('change', function(){
-          datatable.columns(11).search(this.value).draw();   
+          datatable.columns(12).search(this.value).draw();   
             $($.fn.dataTable.tables(true)).DataTable()
         .columns.adjust();
         });
 
         @if (isset($data['q_status']))
-            datatable.columns(11).search("{{$data['q_status']}}").draw();   
+            datatable.columns(12).search("{{$data['q_status']}}").draw();   
         @endif
 	};
 

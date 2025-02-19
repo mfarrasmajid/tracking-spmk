@@ -184,6 +184,7 @@ class AdminController extends Controller
             if (($ext == 'xls') || ($ext == 'xlsx') || ($ext == 'XLS') || ($ext == 'XLSX')) {
                 $array_file = Excel::toArray(new ExcelImport, $file);
                 $success = 0;
+                $duplicate = 0;
                 foreach ($array_file[0] as $key => $row) {
                     if ($key != 0){
                         if ((trim($row[0]) != '') &&
@@ -203,21 +204,21 @@ class AdminController extends Controller
                             (trim($row[14]) != '') &&
                             (trim($row[15]) != '')) {
                             $check = DB::table('document_tracking')->where('pid', trim($row[0]))
-                                                                 ->where('site_name', trim($row[1]))
-                                                                 ->where('region', trim($row[2]))
+                                                                //  ->where('site_name', trim($row[1]))
+                                                                //  ->where('region', trim($row[2]))
                                                                  ->where('scope', trim($row[3]))
-                                                                 ->where('amount', trim($row[4]))
-                                                                 ->where('supplier_name', trim($row[5]))
+                                                                //  ->where('amount', trim($row[4]))
+                                                                //  ->where('supplier_name', trim($row[5]))
                                                                  ->where('spmk', trim($row[6]))
-                                                                 ->where('pm_nik', trim($row[7]))
-                                                                 ->where('mgr_region_nik', trim($row[8]))
-                                                                 ->where('gm_area_nik', trim($row[9]))
-                                                                 ->where('mgr_cons_nik', trim($row[10]))
-                                                                 ->where('gm_cons_nik', trim($row[11]))
-                                                                 ->where('mgr_proc_nik', trim($row[12]))
-                                                                 ->where('vp_proc_nik', trim($row[13]))
-                                                                 ->where('se_nik', trim($row[14]))
-                                                                 ->where('off_proc_nik', trim($row[15]))
+                                                                //  ->where('pm_nik', trim($row[7]))
+                                                                //  ->where('mgr_region_nik', trim($row[8]))
+                                                                //  ->where('gm_area_nik', trim($row[9]))
+                                                                //  ->where('mgr_cons_nik', trim($row[10]))
+                                                                //  ->where('gm_cons_nik', trim($row[11]))
+                                                                //  ->where('mgr_proc_nik', trim($row[12]))
+                                                                //  ->where('vp_proc_nik', trim($row[13]))
+                                                                //  ->where('se_nik', trim($row[14]))
+                                                                //  ->where('off_proc_nik', trim($row[15]))
                                                                  ->select()
                                                                  ->get();
                             if (count($check) == 0){
@@ -242,13 +243,15 @@ class AdminController extends Controller
                                     'created_at' => date('Y-m-d H:i:s'),
                                 ]);
                                 $success++;
+                            } else {
+                                $duplicate++;
                             }
                         }
                     }
                 }
                 $notifier = 'success';
-                $message = 'Berhasil mengupload ' . $success . ' pid';
-                $activity = 'Success Upload Bulk SPMK, ' . $success . ' PID';
+                $message = 'Berhasil mengupload ' . $success . ' pid, duplikat '.$duplicate . ' pid';
+                $activity = 'Success Upload Bulk SPMK, ' . $success . ' PID, Duplicate '.$duplicate .' PID';
                 $status = 'SUCCESS';
                 $datetime = date('Y-m-d H:i:s');
                 DB::table('log')->insert([
