@@ -220,7 +220,7 @@ class MainController extends Controller
         $data['document_pm'] = explode('|', $doc->pm_doc);
         $data['document_proc'] = explode('|', $doc->mgr_proc_doc);
         $data['privilege'] = 0;
-        if (($nik_tg == '935378') && ($doc->id_status != 9)){
+        if ((($nik_tg == '935378') || ($nik_tg == '925697')) && ($doc->id_status != 9)){
             $data['privilege'] = 1;
             if (($doc->id_status == 1) || ($doc->id_status == 11)){
                 $data['latest_pic'] = 'PM';
