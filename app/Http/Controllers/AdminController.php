@@ -219,6 +219,7 @@ class AdminController extends Controller
                                                                 //  ->where('vp_proc_nik', trim($row[13]))
                                                                 //  ->where('se_nik', trim($row[14]))
                                                                 //  ->where('off_proc_nik', trim($row[15]))
+                                                                 ->where('id_status', '!=', 12)
                                                                  ->select()
                                                                  ->get();
                             if (count($check) == 0){
