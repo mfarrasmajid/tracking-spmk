@@ -40,7 +40,7 @@ Route::prefix('admin')->group(function () {
     Route::post('/upload_spmk', 'AdminController@submit_upload_spmk');
     Route::post('/deactivate_pid/{id}', 'AdminController@deactivate_pid');
     Route::prefix('api')->group(function () {
-        Route::get('/get_list_manage_users', 'AdminController@get_list_manage_users');
-        Route::get('/get_list_manage_sow', 'AdminController@get_list_manage_sow');
+        Route::post('/get_list_manage_users', 'AdminController@get_list_manage_users');
+        Route::post('/get_list_manage_sow', 'AdminController@get_list_manage_sow');
     });
 });
