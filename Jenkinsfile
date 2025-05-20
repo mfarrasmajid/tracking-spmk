@@ -20,7 +20,7 @@ pipeline {
     }
 
     environment {
-        REPO_URL = 'https://repo.mitratel.co.id/inhouse-app/tracking_spmk.git'
+        REPO_URL = 'http://repo.mitratel.co.id/inhouse-app/tracking_spmk.git'
         REPO_URL_SHORT = '@repo.mitratel.co.id/inhouse-app/tracking_spmk.git'
         BRANCH_NAME = 'master'
         APP_NAME = 'Tracking SPMK'
