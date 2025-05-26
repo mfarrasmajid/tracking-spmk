@@ -219,6 +219,8 @@ class MainController extends Controller
         }
         $data['document_pm'] = explode('|', $doc->pm_doc);
         $data['document_proc'] = explode('|', $doc->mgr_proc_doc);
+        $data['document_admin'] = explode('|', $doc->admin_doc);
+        $data['date_document_admin'] = $doc->admin_date;
         $data['privilege'] = 0;
         if ((($nik_tg == '935378') || ($nik_tg == '925697')) && ($doc->id_status != 9)){
             $data['privilege'] = 1;
@@ -592,6 +594,83 @@ class MainController extends Controller
             ]);
             return redirect()->route('detail_list_document', ['id' => $id])->with('success', 'Dokumen berhasil direturn!');
         }
+    }
+
+    public function submit_additional_document(Request $request, $id){
+        $nik_tg = $request->session()->get('user')->nik_tg;
+        $name = $request->session()->get('user')->name;
+        $check = DB::table('document_tracking')->where('id', $id)->select('*')->get();
+        if (count($check) == 0){
+            return redirect()->route('list_document')->with('error', 'ID Dokumen tidak ditemukan, mohon cek kembali URL anda');
+        }
+        $check = $check->first();
+        if ($request->file()){
+            $files = $request->file('document');
+            $array_filename = [];
+            foreach($files as $key => $file){
+                $ext = $file->extension();
+                if (($ext == 'pdf') || ($ext == 'PDF')) {
+                    $count = $check->id.rand(0,10000);
+                    $fileName = $count.'_'.$file->getClientOriginalName();
+                    $move = $file->move(public_path('storage'), $fileName);
+                    if ($move){
+                        $array_filename[] = $fileName;
+                        $datetime = date('Y-m-d H:i:s');
+                        $activity = 'Success Upload Document File in Additional Document file '.$fileName;
+                        $status = 'SUCCESS';
+                        DB::table('log')->insert([
+                            'nik_tg' => $nik_tg,
+                            'activity' => $activity,
+                            'status' => $status,
+                            'datetime' => $datetime
+                        ]);
+                    } else {
+                        $activity = 'Failed Upload Document File in Additional Document file '.$fileName;
+                        $status = 'ERROR';
+                        $datetime = date('Y-m-d H:i:s');
+                        DB::table('log')->insert([
+                            'nik_tg' => $nik_tg,
+                            'activity' => $activity,
+                            'status' => $status,
+                            'datetime' => $datetime
+                        ]);
+                        return back()
+                        ->with('error', 'Gagal mengupload file dokumen. Mohon kontak admin IT.');
+                    }
+                } else {
+                    return back()
+                        ->with('error', 'Gagal mengupload file dokumen. Harus extension pdf!');
+                }
+            }
+        } else {
+            $array_filename = [];
+        }
+        $input = $request->all();
+        $doc = implode('|', $array_filename);
+        $update = DB::table('document_tracking')->where('id', $id)
+                                                        ->update([
+                                                            'admin_doc' => $doc,
+                                                            'admin_date' => date('Y-m-d H:i:s'),
+                                                        ]);
+        $update_komentar = DB::table('document_komentar')->insertGetId([
+            'id_document' => $id,
+            'nik_tg' => $nik_tg,
+            'name' => $name,
+            'approval_status' => 'APPROVED',
+            'activity' => 'Admin Upload Additional Document',
+            'komentar' => 'Berhasil diupload'
+        ]);
+
+        $activity = 'Success Upload Additional Document ID '.$id;
+        $status = 'SUCCESS';
+        $datetime = date('Y-m-d H:i:s');
+        DB::table('log')->insert([
+            'nik_tg' => $nik_tg,
+            'activity' => $activity,
+            'status' => $status,
+            'datetime' => $datetime
+        ]);
+        return redirect()->route('detail_list_document', ['id' => $id])->with('success', 'Document berhasil diupload!');
     }
 
     public function new_doc (Request $request, $id){

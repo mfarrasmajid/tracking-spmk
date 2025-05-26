@@ -26,6 +26,7 @@ Route::prefix('dashboard')->group(function() {
     Route::get('/print_document/{id}', 'MainController@print_document')->name('print_document');
     Route::post('/new_doc/{id}', 'MainController@new_doc')->name('new_doc');
     Route::get('/export_csv', 'MainController@export_csv');
+    Route::post('/additional_document/{id}', 'MainController@submit_additional_document')->name('additional_document');
 });
 Route::prefix('admin')->group(function () {
     Route::get('/manage_users', 'AdminController@manage_users')->name('manage_users');

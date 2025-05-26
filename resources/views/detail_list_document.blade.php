@@ -132,6 +132,17 @@
                                     <div class="fs-5 fw-bolder text-muted mb-2">Amount Awal</div>
                                     <div class="fs-6 ">@php echo number_format($data['document']->amount_awal, 0, ',', '.'); @endphp</div>
                                 </div>
+                                <div class="mb-5">
+                                    <div class="border bg-gray-100 rounded-3 p-5">
+                                        <div class="fs-5 fw-bolder mb-2">Dokumen Additional</div>
+                                        @foreach($data['document_admin'] as $doc)
+                                        <a href="{{ asset('/storage') }}/{{$doc}}">{{$doc}}</a>
+                                        @endforeach
+                                        @if ($data['date_document_admin'] != '')
+                                        <div class="fs-6 mt-2">Tanggal Upload: {{$data['date_document_admin']}}</div>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-5">
@@ -582,6 +593,29 @@
                                 @endif
                             </form>
                         </div>
+                    </div>
+                    @endif
+                    @if (session()->get('special'))
+                    <div class="col-lg-12 mt-5">
+                        <form action="{{url('/dashboard/additional_document')}}/{{$data['document']->id}}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="border p-5 rounded-3 bg-gray-100">
+                                <div class="fs-2 fw-bolder">Tambahan Dokumen (khusus Admin)</div>
+                                <div class="separator border-gray-400 my-5"></div>
+                                <div class="fv-row fv-plugins-icon-container fv-plugins-bootstrap5-row-valid mb-5">
+                                    <!--begin::Label-->
+                                    <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
+                                        <span class="required">Eviden Tambahan</span>
+                                    </label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <input type="file" name="document[]" multiple="multiple" class="form-control" accept=".pdf" required>
+                                    <!--end::Input-->
+                                    <div class="fv-plugins-message-container invalid-feedback"></div>
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+                            </div>
+                        </form>
                     </div>
                     @endif
                 </div>
