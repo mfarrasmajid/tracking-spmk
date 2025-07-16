@@ -125,7 +125,7 @@
                                 <div class="mb-5">
                                     <div class="fs-5 fw-bolder text-muted mb-2">Dokumen Upload PM</div>
                                     @foreach($data['document_pm'] as $doc)
-                                    <a href="{{ asset('/storage') }}/@php echo urlencode($doc); @endphp">{{$doc}}</a>
+                                    <a href="{{ asset('/storage') }}/@php echo rawurlencode($doc); @endphp">{{$doc}}</a>
                                     @endforeach
                                 </div>
                                 <div class="mb-5">
@@ -136,7 +136,7 @@
                                     <div class="border bg-gray-100 rounded-3 p-5">
                                         <div class="fs-5 fw-bolder mb-2">Dokumen Additional</div>
                                         @foreach($data['document_admin'] as $doc)
-                                        <a href="{{ asset('/storage') }}//@php echo urlencode($doc); @endphp">{{$doc}}</a>
+                                        <a href="{{ asset('/storage') }}//@php echo rawurlencode($doc); @endphp">{{$doc}}</a>
                                         @endforeach
                                         @if ($data['date_document_admin'] != '')
                                         <div class="fs-6 mt-2">Tanggal Upload: {{$data['date_document_admin']}}</div>
@@ -171,7 +171,7 @@
                                 <div class="mb-5">
                                     <div class="fs-5 fw-bolder text-muted mb-2">Dokumen Upload Proc</div>
                                     @foreach($data['document_proc'] as $doc)
-                                    <a href="{{ asset('/storage') }}//@php echo urlencode($doc); @endphp">{{$doc}}</a>
+                                    <a href="{{ asset('/storage') }}//@php echo rawurlencode($doc); @endphp">{{$doc}}</a>
                                     @endforeach
                                 </div>
                                 <div class="mb-5">
