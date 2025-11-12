@@ -39,8 +39,8 @@
                     <!--end::Input-->
                 </div>
                 <!--end::Input group-->
-                <!--begin::Input group-->
-                <div class="fv-row mb-10">
+                <!--end::Input group=-->
+                <div class="fv-row mb-3">
                     <!--begin::Wrapper-->
                     <div class="d-flex flex-stack mb-2">
                         <!--begin::Label-->
@@ -51,11 +51,19 @@
                         <!--end::Link-->
                     </div>
                     <!--end::Wrapper-->
-                    <!--begin::Input-->
-                    <input class="form-control form-control-lg form-control-solid" type="password" name="password"/>
-                    <!--end::Input-->
+                    <div class="input-group mb-5">
+                        <input id="password" type="password" class="form-control bg-transparent" name="password" placeholder="Password" autocomplete="off"/>
+                        <button type="button" class="input-group-text" onclick="show_hide()">
+                            <i class="fa fa-eye show-hide">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                        </button>
+                    </div>
+                    <!--end::Password-->
                 </div>
-                <!--end::Input group-->
+                <!--end::Input group=-->
                 <!--begin::Actions-->
                 <div class="text-center">
                     <!--begin::Submit button-->
@@ -125,5 +133,18 @@ var KTSigninGeneral = (function () {
 KTUtil.onDOMContentLoaded(function () {
     KTSigninGeneral.init();
 });
+function show_hide() {
+    var x = document.getElementById("password");
+    var y = $(".show-hide");
+    if (x.type === "password") {
+        x.type = "text";
+        y.removeClass("fa-eye");
+        y.addClass("fa-eye-slash");
+    } else {
+        x.type = "password";
+        y.addClass("fa-eye");
+        y.removeClass("fa-eye-slash");
+    }
+}
 </script>  
 @stop 
